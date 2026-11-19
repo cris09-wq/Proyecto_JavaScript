@@ -1,11 +1,20 @@
 import './deckStyles.css';
 import { getCards } from '../../api/cardsApi.js';
-import { shuffle } from '../../utils/random.js';
 import { validateDeck, hasEnoughActiveCards } from '../../utils/validators.js';
 import { getComboRegions, COMBO_BONUS } from '../../utils/battleEngine.js';
 import { typeColor } from '../../utils/cardTypes.js';
 import { esc, emit } from '../../utils/dom.js';
 import { cardHTML, bindCardImageFallback } from '../cards/cardView.js';
+
+const FILTROS = [
+  { id: 'todo', label: 'Todo', emoji: '🃏' },
+  { id: 'Caldo', label: 'Caldos', emoji: '🥣' },
+  { id: 'Asado', label: 'Asados', emoji: '🍖' },
+  { id: 'Frito', label: 'Fritos', emoji: '🍟' },
+  { id: 'Masa', label: 'Masas', emoji: '🫓' },
+  { id: 'Dulce', label: 'Dulces', emoji: '🍬' },
+  { id: 'Bebida', label: 'Bebidas', emoji: '🥤' },
+];
 
 /** Paso 1: elegir 5 cartas distintas · Paso 2: definir el orden del mazo. */
 export class DeckSelector extends HTMLElement {
@@ -15,7 +24,8 @@ export class DeckSelector extends HTMLElement {
     this.selected = []; // ids elegidos, en orden de selección
     this.order = []; // ids en el orden de combate
     this.flipped = {}; // cartas que muestran su dato curioso
-    this.pickOrder = []; // orden aleatorio de la cuadrícula (nuevo en cada partida)
+    this.pickOrder = []; // ids en orden numérico
+    this.filtro = 'todo';
     this.step = 'load';
     this.render();
     this.configurarEventos();
@@ -32,8 +42,13 @@ export class DeckSelector extends HTMLElement {
     try {
       const todas = await getCards(); // GET
       this.cards = todas.filter((c) => c.active);
-      // Las cartas aparecen en un orden distinto en cada partida
-      this.pickOrder = shuffle(this.cards.map((c) => c.id));
+      this.pickOrder = this.cards
+        .map((c) => c.id)
+        .sort((a, b) => {
+          const na = Number(String(a).match(/(\d+)$/)?.[1] ?? 0);
+          const nb = Number(String(b).match(/(\d+)$/)?.[1] ?? 0);
+          return na - nb || String(a).localeCompare(String(b));
+        });
       this.step = hasEnoughActiveCards(todas) ? 'pick' : 'few';
     } catch (error) {
       console.error(error);
@@ -46,11 +61,20 @@ export class DeckSelector extends HTMLElement {
     return this.cards.find((c) => c.id === id);
   }
 
+  filtrosHTML() {
+    return `<div class="filtros" role="group" aria-label="Filtrar cartas">
+      ${FILTROS.map((f) => {
+        const on = this.filtro === f.id;
+        return `<button class="filtro ${on ? 'on' : ''}" data-filter="${esc(f.id)}" aria-pressed="${on}">${f.emoji} ${esc(f.label)}</button>`;
+      }).join('')}
+    </div>`;
+  }
+
   comboLine(ids) {
     const cs = ids.map((id) => this.porId(id)).filter(Boolean);
     const regiones = getComboRegions(cs);
     const pct = Math.round(COMBO_BONUS * 100);
-    if (!regiones.length) return `<p class="combo-line muted">🔗 Combo regional: junta 2 o más cartas de la misma región y ganan +${pct} % de daño.</p>`;
+    if (!regiones.length) return '';
     const detalle = regiones.map((r) => `${esc(r)} ×${cs.filter((c) => c.region === r).length}`).join(' · ');
     return `<p class="combo-line on">🔗 Combo activo: ${detalle} (+${pct} % de daño a esas cartas)</p>`;
   }
@@ -71,9 +95,10 @@ export class DeckSelector extends HTMLElement {
 
   renderPick() {
     const lleno = this.selected.length === 5;
-    const grid = this.pickOrder
+    const visibles = this.pickOrder
       .map((id) => this.porId(id))
-      .filter(Boolean)
+      .filter((c) => c && (this.filtro === 'todo' || c.type === this.filtro));
+    const grid = visibles
       .map((c) => {
         const sel = this.selected.includes(c.id);
         return `<div class="cw">${cardHTML(c, {
@@ -85,7 +110,7 @@ export class DeckSelector extends HTMLElement {
         })}
           <button class="info" data-info="${esc(c.id)}" aria-label="Ver dato curioso" title="Dato curioso">${this.flipped[c.id] ? '↩' : 'ℹ️'}</button></div>`;
       })
-      .join('');
+      .join('') || '<p class="muted">No hay cartas de este tipo.</p>';
     const chips =
       this.selected.map((id) => `<span>${esc(this.porId(id).emoji || '🍽️')} ${esc(this.porId(id).name)}</span>`).join('') ||
       '<span class="muted">Aún no has elegido ninguna</span>';
@@ -97,7 +122,7 @@ export class DeckSelector extends HTMLElement {
         <div class="counter">Seleccionadas <b>${this.selected.length}</b> / 5</div>
       </div>
       <div class="sel-chips">${chips}</div>
-      ${this.comboLine(this.selected)}
+      ${this.filtrosHTML()}
       <div class="table"><div class="grid">${grid}</div></div>
       <div class="row end">
         <button class="btn" data-act="clear" ${this.selected.length ? '' : 'disabled'}>Limpiar</button>
@@ -129,6 +154,11 @@ export class DeckSelector extends HTMLElement {
 
   configurarEventos() {
     this.addEventListener('click', (e) => {
+      const filtro = e.target.closest('[data-filter]');
+      if (filtro) {
+        this.filtro = filtro.dataset.filter;
+        return this.render();
+      }
       // Mover carta en el orden del mazo
       const mv = e.target.closest('[data-mv]');
       if (mv && !mv.disabled) {

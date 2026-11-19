@@ -41,6 +41,10 @@ export async function patchPlayer(data, id) {
   });
 }
 
+export async function deletePlayer(id) {
+  return request(`/players/${id}`, { method: 'DELETE' });
+}
+
 /**
  * Suma el resultado de una partida al jugador (puntos acumulativos).
  * Lee el estado actual del servidor para no pisar datos de otra pestaña.

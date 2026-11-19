@@ -7,6 +7,10 @@
 .cw .info:hover{background:var(--yellow)}
 .sel-chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
 .sel-chips span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 11px;font-size:.85rem;font-weight:800}
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.filtro{border:2px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:6px 14px;font:inherit;font-weight:800;font-size:.85rem;cursor:pointer;transition:.15s}
+.filtro:hover{border-color:var(--navy);transform:translateY(-1px)}
+.filtro.on{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 3px 10px #0b0e2e55}
 .combo-line{margin:0 0 12px;padding:8px 14px;border-radius:14px;border:1px dashed #c9cfe8;font-size:.9rem}
 .combo-line.on{border:1px solid #9b78e8;background:#efe8ff;color:#47248f;font-weight:800}
 

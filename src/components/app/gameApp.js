@@ -2,6 +2,7 @@ import './appStyles.css';
 import '../auth/playerRegister.js';
 import '../auth/adminLogin.js';
 import '../cards/cards.js';
+import '../admin/adminPanel.js';
 import '../deck/deckSelector.js';
 import '../battle/battle.js';
 import '../leaderboard/leaderboard.js';
@@ -62,13 +63,18 @@ export class GameApp extends HTMLElement {
   renderHeader() {
     const { view, player, admin, inBattle } = this.state;
     const jugar = ['register', 'pick', 'battle'].includes(view);
+    const nav = admin
+      ? `<span class="chip">🛠️ Admin</span>
+         <button class="nbtn ${view === 'admin' ? 'on' : ''}" data-nav="admin">Panel</button>`
+      : `${player ? `<span class="chip">👤 ${esc(player.nickname)} · ${player.points} pts</span>` : ''}
+         <button class="nbtn ${jugar ? 'on' : ''}" data-nav="play" ${inBattle ? 'disabled' : ''}>Jugar</button>
+         <button class="nbtn ${view === 'ranking' ? 'on' : ''}" data-nav="rank" ${inBattle ? 'disabled' : ''}>Ranking</button>
+         ${player ? '' : `<button class="nbtn" data-nav="admin">Admin</button>`}`;
     this.querySelector('#top').innerHTML = /* html */ `
       <div class="brand"><span class="flag"></span><b>Sabores de Colombia</b></div>
       <nav>
-        ${player ? `<span class="chip">👤 ${esc(player.nickname)} · ${player.points} pts</span>` : ''}
-        <button class="nbtn ${jugar ? 'on' : ''}" data-nav="play" ${inBattle ? 'disabled' : ''}>Jugar</button>
-        <button class="nbtn ${view === 'ranking' ? 'on' : ''}" data-nav="rank" ${inBattle ? 'disabled' : ''}>Ranking</button>
-        <button class="nbtn ${view === 'admin' ? 'on' : ''}" data-nav="admin" ${inBattle ? 'disabled' : ''}>Admin${admin ? ' ✓' : ''}</button>
+        ${nav}
+        ${player || admin ? `<button class="nbtn" data-nav="logout">Cerrar sesión</button>` : ''}
         <button class="nbtn" data-nav="mute" title="Sonido" aria-label="Activar o silenciar sonido">${isMuted() ? '🔇' : '🔊'}</button>
       </nav>`;
   }
@@ -91,7 +97,7 @@ export class GameApp extends HTMLElement {
       main.innerHTML = '<game-leaderboard></game-leaderboard>';
       main.firstElementChild.playerId = player?.id ?? null;
     } else if (view === 'admin') {
-      main.innerHTML = admin ? '<cards-admin></cards-admin>' : '<admin-login></admin-login>';
+      main.innerHTML = admin ? '<admin-panel></admin-panel>' : '<admin-login></admin-login>';
     }
     this.renderHeader();
   }
@@ -117,6 +123,14 @@ export class GameApp extends HTMLElement {
     this.mostrar(this.state.player ? 'pick' : 'register');
   }
 
+  cerrarSesion() {
+    const eraAdmin = Boolean(this.state.admin);
+    guardar(localStorage, PLAYER_KEY, null);
+    guardar(sessionStorage, ADMIN_KEY, null);
+    Object.assign(this.state, { player: null, admin: null, deck: null, inBattle: false });
+    this.mostrar(eraAdmin ? 'admin' : 'register');
+  }
+
   configurarEventos() {
     this.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-nav]');
@@ -125,7 +139,8 @@ export class GameApp extends HTMLElement {
       if (destino === 'mute') {
         toggleMute();
         btn.textContent = isMuted() ? '🔇' : '🔊';
-      } else if (destino === 'play') this.irAJugar();
+      } else if (destino === 'logout') this.cerrarSesion();
+      else if (destino === 'play') this.irAJugar();
       else if (destino === 'rank') this.mostrar('ranking');
       else if (destino === 'admin') this.mostrar('admin');
     });
@@ -161,11 +176,7 @@ export class GameApp extends HTMLElement {
       guardar(sessionStorage, ADMIN_KEY, this.state.admin);
       this.mostrar('admin');
     });
-    this.addEventListener('admin-logout', () => {
-      this.state.admin = null;
-      guardar(sessionStorage, ADMIN_KEY, null);
-      this.mostrar('admin');
-    });
+    this.addEventListener('admin-logout', () => this.cerrarSesion());
   }
 }
 

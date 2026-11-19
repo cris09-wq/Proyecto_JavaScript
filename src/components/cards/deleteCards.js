@@ -9,7 +9,7 @@ export function eliminarCarta(host, card, onDone) {
     `<div class="em">🗑️</div><h3>¿Eliminar carta?</h3>
      <p>Se borrará <b>${esc(card.name)}</b> de forma permanente. Si solo quieres sacarla del juego, usa el interruptor "Activa" (PATCH).</p>
      <p class="msg" id="formMsg" role="status"></p>
-     <div class="row end"><button class="btn" data-close>Cancelar</button><button class="btn danger" id="yes">Sí, eliminar (DELETE)</button></div>`
+     <div class="row end"><button class="btn" data-close>Cancelar</button><button class="btn danger" id="yes">Eliminar</button></div>`
   );
   box.querySelector('[data-close]').onclick = cerrar;
   box.querySelector('#yes').onclick = async () => {
@@ -18,7 +18,7 @@ export function eliminarCarta(host, card, onDone) {
     try {
       await deleteCard(card.id);
       cerrar();
-      onDone(`✅ DELETE /cards/${card.id} → "${card.name}" eliminada.`);
+      onDone(`✅ "${card.name}" eliminada.`);
     } catch (error) {
       console.error(error);
       msg.className = 'msg err';
