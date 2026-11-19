@@ -15,14 +15,13 @@ export class AdminLogin extends HTMLElement {
       <section class="panel login">
         <div class="eyebrow">ZONA PROTEGIDA</div>
         <h2>Administración</h2>
-        <p class="muted">Ingresa para gestionar el pool de cartas (CRUD).</p>
+        <p class="muted">Ingresa para gestionar el pool de cartas.</p>
         <form id="loginForm" autocomplete="off" novalidate>
           <label>Usuario<input id="user" name="username" placeholder="admin" required></label>
           <label>Contraseña<input id="pass" name="password" type="password" placeholder="••••••••" required></label>
           <button class="btn primary" id="loginBtn" type="submit">Entrar</button>
         </form>
         <p class="msg" id="loginMsg" role="status"></p>
-        <p class="note">Login académico: las credenciales viven en db.json y no son seguridad real.</p>
       </section>`;
   }
 
