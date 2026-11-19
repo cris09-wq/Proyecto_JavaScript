@@ -9,6 +9,7 @@ import '../leaderboard/leaderboard.js';
 import { getPlayerById } from '../../api/playersApi.js';
 import { esc } from '../../utils/dom.js';
 import { isMuted, toggleMute } from '../../utils/audio.js';
+import { assetUrl } from '../../utils/assets.js';
 
 const PLAYER_KEY = 'cba:player'; // el jugador queda guardado en este navegador
 const ADMIN_KEY = 'cba:admin'; // la sesión de admin dura mientras la pestaña esté abierta
@@ -35,6 +36,11 @@ const guardar = (storage, key, value) => {
 export class GameApp extends HTMLElement {
   constructor() {
     super();
+    // Fondo del juego: velo azul marino encima de la foto
+    document.body.style.background = `
+        linear-gradient(rgba(13, 15, 43, 0.5), rgba(27, 36, 103, 0.7)),
+        url("${assetUrl('/images/fondo.jpg')}") center / cover fixed,
+        var(--navy)`;
     this.state = {
       view: 'register', // register | pick | battle | ranking | admin
       player: leer(localStorage, PLAYER_KEY),

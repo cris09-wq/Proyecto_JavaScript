@@ -12,30 +12,36 @@
   --blue: #1f5fbf;
   --sand: #e7cf9a;
 }
+
 * {
   box-sizing: border-box;
 }
+
 html,
 body {
   margin: 0;
 }
+
 body {
   background: var(--navy);
   color: var(--ink);
   font-family: "Nunito", system-ui, sans-serif;
   min-height: 100vh;
 }
+
 h1,
 h2,
 h3 {
   font-family: "Zilla Slab", Georgia, serif;
   margin: 0;
 }
+
 button {
   font: inherit;
   cursor: pointer;
   color: inherit;
 }
+
 button:disabled {
   cursor: not-allowed;
 }
@@ -44,6 +50,7 @@ button:disabled {
 .stage {
   padding: 18px 14px 26px;
 }
+
 .sheet {
   max-width: 1120px;
   margin: 0 auto;
@@ -54,14 +61,17 @@ button:disabled {
   position: relative;
   overflow: hidden;
 }
+
 .foot {
   max-width: 1120px;
   margin: 16px auto 0;
   text-align: center;
-  color: #b9c0f0;
+  color: #fff;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: .85rem;
+  text-shadow: 0 1px 8px #000c, 0 0 3px #000a
 }
+
 .top {
   display: flex;
   align-items: center;
@@ -70,11 +80,13 @@ button:disabled {
   justify-content: space-between;
   padding: 2px 0 14px;
 }
+
 .brand {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
 .flag {
   width: 32px;
   height: 32px;
@@ -85,17 +97,20 @@ button:disabled {
     0 0 0 1px #cfd5ea,
     0 3px 6px #0003;
 }
+
 .brand b {
   font-family: "Zilla Slab";
   font-size: 1.1rem;
   letter-spacing: 0.02em;
 }
+
 nav {
   display: flex;
   gap: 6px;
   align-items: center;
   flex-wrap: wrap;
 }
+
 .nbtn {
   background: none;
   border: 0;
@@ -105,15 +120,19 @@ nav {
   color: var(--ink);
   border-radius: 0;
 }
+
 .nbtn:hover {
   border-bottom-color: #c7e8b0;
 }
+
 .nbtn.on {
   border-bottom-color: var(--green);
 }
+
 .nbtn:disabled {
   opacity: 0.35;
 }
+
 .chip {
   background: var(--soft);
   border: 1px solid var(--line);
@@ -133,9 +152,11 @@ nav {
   font-weight: 800;
   color: var(--ink);
 }
+
 .btn:hover:not(:disabled) {
   border-color: var(--navy);
 }
+
 .btn.primary {
   background: var(--green);
   border-color: var(--green);
@@ -144,37 +165,46 @@ nav {
   letter-spacing: 0.05em;
   box-shadow: 0 5px 0 var(--green2);
 }
+
 .btn.primary:hover:not(:disabled) {
   background: #68c036;
 }
+
 .btn.primary:active {
   transform: translateY(3px);
   box-shadow: 0 2px 0 var(--green2);
 }
+
 .btn:disabled {
   opacity: 0.4;
   box-shadow: none;
 }
+
 .msg {
   min-height: 1.4em;
   margin: 10px 0 0;
   font-weight: 800;
 }
+
 .msg.err {
   color: #c0152f;
 }
+
 .msg.ok {
   color: #2f8f2f;
 }
+
 .muted {
   color: var(--muted);
 }
+
 .row {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   align-items: center;
 }
+
 .spin {
   display: inline-block;
   width: 18px;
@@ -186,17 +216,20 @@ nav {
   vertical-align: -3px;
   margin-right: 8px;
 }
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
+
 .panel {
   background: var(--soft);
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 18px;
 }
+
 .stepbar {
   display: flex;
   gap: 10px;
@@ -205,22 +238,26 @@ nav {
   flex-wrap: wrap;
   margin-bottom: 12px;
 }
+
 .stepbar h2 {
   font-size: 1.9rem;
   text-transform: uppercase;
   line-height: 1;
 }
+
 .eyebrow {
   letter-spacing: 0.28em;
   font-weight: 800;
   font-size: 0.8rem;
   color: var(--ink);
 }
+
 .counter {
   font-family: "Zilla Slab";
   font-weight: 700;
   font-size: 1.3rem;
 }
+
 .counter b {
   color: var(--green2);
   font-size: 1.7rem;
@@ -237,6 +274,7 @@ nav {
   z-index: 50;
   padding: 16px;
 }
+
 .ovbox {
   background: #fff;
   color: var(--ink);
@@ -249,9 +287,11 @@ nav {
   position: relative;
   overflow: hidden;
 }
+
 .ovbox .em {
   font-size: 4rem;
 }
+
 .ovbox h2 {
   font-size: 2.4rem;
   text-transform: uppercase;
@@ -264,6 +304,7 @@ nav {
     border-radius: 20px;
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01s !important;
@@ -282,6 +323,7 @@ battle-controls,
 game-leaderboard {
   display: block;
 }
+
 .row.end {
   justify-content: flex-end;
 }
