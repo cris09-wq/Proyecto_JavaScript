@@ -15,6 +15,24 @@
       "gamesPlayed": 0,
       "createdAt": "2026-11-19T22:13:57.607Z",
       "id": 2
+    },
+    {
+      "nickname": "ASD",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-19T22:49:35.287Z",
+      "id": 3
+    },
+    {
+      "nickname": "SAA",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-19T22:50:03.511Z",
+      "id": 4
     }
   ],
   "cards": [
