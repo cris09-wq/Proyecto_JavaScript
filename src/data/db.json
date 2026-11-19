@@ -1,6 +1,1033 @@
 {
+  "admins": [
+    {
+      "id": "admin-001",
+      "username": "admin",
+      "password": "cards2026"
+    }
+  ],
   "players": [],
-  "admins": [],
-  "cards": [],
+  "cards": [
+    {
+      "id": "card-001",
+      "name": "Bandeja Paisa",
+      "type": "Asado",
+      "image": "/images/cards/bandeja-paisa.webp",
+      "description": "Plato monumental de frijoles, chicharrón, chorizo y huevo. Pesada, contundente y difícil de derribar.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Chicharrón Crujiente",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Lanzamiento de Chorizo",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Golpe de Frijolada",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Huevo Frito Explosivo",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Muro de Arroz",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Colesterol Letal",
+        "baseDamage": 68,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-asado.mp3",
+        "defense": "/sounds/defense-asado.mp3",
+        "special": "/sounds/special-asado.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Antioquia",
+      "fact": "Es el plato insignia de Antioquia: una montaña de frijoles, arroz, chicharrón, chorizo, huevo, plátano y arepa en una sola bandeja.",
+      "emoji": "🍛"
+    },
+    {
+      "id": "card-002",
+      "name": "Ajiaco Santafereño",
+      "type": "Caldo",
+      "image": "/images/cards/ajiaco-santafereno.webp",
+      "description": "Sopa bogotana de tres papas, pollo y guascas. Calienta el cuerpo y quema al rival.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Salpicón de Guascas",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Papa Criolla Veloz",
+          "baseDamage": 28
+        },
+        {
+          "id": "attack-03",
+          "name": "Cucharón Hirviente",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Aguacate Aplastante",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Tapa de Olla",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Hervor Capitalino",
+        "baseDamage": 65,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-caldo.mp3",
+        "defense": "/sounds/defense-caldo.mp3",
+        "special": "/sounds/special-caldo.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Altiplano",
+      "fact": "Lleva tres tipos de papa y guascas, la hierba que le da su sabor inconfundible. Es el plato bandera de Bogotá.",
+      "emoji": "🍲"
+    },
+    {
+      "id": "card-003",
+      "name": "Lechona Tolimense",
+      "type": "Asado",
+      "image": "/images/cards/lechona-tolimense.webp",
+      "description": "Cerdo relleno de arroz y arvejas, horneado por horas. Su piel crujiente es una armadura.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Piel Crujiente",
+          "baseDamage": 22
+        },
+        {
+          "id": "attack-02",
+          "name": "Embestida de Arroz",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Mordisco al Horno",
+          "baseDamage": 42
+        },
+        {
+          "id": "attack-04",
+          "name": "Costillar Furioso",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Coraza Dorada",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Banquete del Tolima",
+        "baseDamage": 70,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-asado.mp3",
+        "defense": "/sounds/defense-asado.mp3",
+        "special": "/sounds/special-asado.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Tolima",
+      "fact": "Es un cerdo relleno de arroz y arvejas que se hornea durante horas. Reina en las fiestas y reuniones del Tolima.",
+      "emoji": "🐖"
+    },
+    {
+      "id": "card-004",
+      "name": "Sancocho de Gallina",
+      "type": "Caldo",
+      "image": "/images/cards/sancocho-de-gallina.webp",
+      "description": "Caldo familiar de domingo con yuca, plátano y mazorca. Resistente como una abuela.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Presa de Gallina",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Lanzamiento de Yuca",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Mazorca Ardiente",
+          "baseDamage": 38
+        },
+        {
+          "id": "attack-04",
+          "name": "Olla a Presión",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Vapor Protector",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Sancocho Dominical",
+        "baseDamage": 66,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-caldo.mp3",
+        "defense": "/sounds/defense-caldo.mp3",
+        "special": "/sounds/special-caldo.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Valle del Cauca",
+      "fact": "Es el plato del paseo de olla y del domingo en familia: se cocina lento, al aire libre y para compartir.",
+      "emoji": "🍗"
+    },
+    {
+      "id": "card-005",
+      "name": "Arepa de Huevo",
+      "type": "Frito",
+      "image": "/images/cards/arepa-de-huevo.webp",
+      "description": "Clásico de la Costa Caribe: masa frita con un huevo escondido en el corazón.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Aceite Salpicante",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Yema Explosiva",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Golpe Caribeño",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Fritura Relámpago",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Corteza Dorada",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Estallido de Yema",
+        "baseDamage": 62,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-frito.mp3",
+        "defense": "/sounds/defense-frito.mp3",
+        "special": "/sounds/special-frito.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Caribe",
+      "fact": "La masa de maíz se fríe con un huevo crudo adentro. Es un clásico callejero de la Costa Caribe.",
+      "emoji": "🥚"
+    },
+    {
+      "id": "card-006",
+      "name": "Empanada Valluna",
+      "type": "Frito",
+      "image": "/images/cards/empanada-valluna.webp",
+      "description": "Media luna rellena de carne y papa con ají picante. Rápida y traicionera.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Mordisco Rápido",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Ají Picante",
+          "baseDamage": 32
+        },
+        {
+          "id": "attack-03",
+          "name": "Relleno Caliente",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Media Luna Cortante",
+          "baseDamage": 48
+        }
+      ],
+      "defense": {
+        "name": "Pliegue Reforzado",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Ají Infernal",
+        "baseDamage": 64,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-frito.mp3",
+        "defense": "/sounds/defense-frito.mp3",
+        "special": "/sounds/special-frito.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Valle del Cauca",
+      "fact": "Se rellena de papa y carne, se fríe y se come con ají. Es infaltable en las mañanas y las ferias del Valle.",
+      "emoji": "🥟"
+    },
+    {
+      "id": "card-007",
+      "name": "Buñuelo",
+      "type": "Frito",
+      "image": "/images/cards/bunuelo.webp",
+      "description": "Esfera dorada de queso y maíz típica de diciembre. Ligera, esquiva y sorprendentemente dura.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Rebote Dorado",
+          "baseDamage": 18
+        },
+        {
+          "id": "attack-02",
+          "name": "Bola de Queso",
+          "baseDamage": 28
+        },
+        {
+          "id": "attack-03",
+          "name": "Rodar Navideño",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Estallido de Novena",
+          "baseDamage": 52
+        }
+      ],
+      "defense": {
+        "name": "Esquiva Esponjosa",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Navidad en Llamas",
+        "baseDamage": 60,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-frito.mp3",
+        "defense": "/sounds/defense-frito.mp3",
+        "special": "/sounds/special-frito.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Antioquia",
+      "fact": "Junto con la natilla es el rey de la Navidad colombiana: esferas fritas de queso y maíz.",
+      "emoji": "🧆"
+    },
+    {
+      "id": "card-008",
+      "name": "Tamal Tolimense",
+      "type": "Masa",
+      "image": "/images/cards/tamal-tolimense.webp",
+      "description": "Masa envuelta en hoja de plátano con cerdo, pollo y arroz. Un guerrero bien amarrado.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Golpe de Hoja",
+          "baseDamage": 22
+        },
+        {
+          "id": "attack-02",
+          "name": "Nudo Apretado",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Relleno Sorpresa",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Cabezazo de Masa",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Envoltura de Plátano",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Tamal de la Abundancia",
+        "baseDamage": 69,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-masa.mp3",
+        "defense": "/sounds/defense-masa.mp3",
+        "special": "/sounds/special-masa.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Tolima",
+      "fact": "Se envuelve en hoja de plátano con cerdo, pollo, arroz y arveja, y se cocina al vapor. Es el desayuno de los domingos tolimenses.",
+      "emoji": "🫔"
+    },
+    {
+      "id": "card-009",
+      "name": "Arepa Paisa",
+      "type": "Masa",
+      "image": "/images/cards/arepa-paisa.webp",
+      "description": "Disco de maíz blanco que acompaña todo. Defensora fiel y atacante constante.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Disco Giratorio",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Maíz Molido",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Mantequilla Resbalosa",
+          "baseDamage": 38
+        },
+        {
+          "id": "attack-04",
+          "name": "Tostada Dura",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Escudo de Maíz",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Arepazo Antioqueño",
+        "baseDamage": 62,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-masa.mp3",
+        "defense": "/sounds/defense-masa.mp3",
+        "special": "/sounds/special-masa.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Antioquia",
+      "fact": "De maíz blanco pelado, acompaña casi todas las comidas paisas, de la bandeja al desayuno.",
+      "emoji": "🫓"
+    },
+    {
+      "id": "card-010",
+      "name": "Mute Santandereano",
+      "type": "Caldo",
+      "image": "/images/cards/mute-santandereano.webp",
+      "description": "Sopa espesa de Santander con maíz, tripa y cinco carnes. Para los que aguantan.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Cucharada Espesa",
+          "baseDamage": 22
+        },
+        {
+          "id": "attack-02",
+          "name": "Tripa Enroscada",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Maíz Pelado",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Caldero Santandereano",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Espesor Impenetrable",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Mute Bucaramangués",
+        "baseDamage": 67,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-caldo.mp3",
+        "defense": "/sounds/defense-caldo.mp3",
+        "special": "/sounds/special-caldo.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Santander",
+      "fact": "Es una sopa espesa de maíz y varias carnes, de las más contundentes de Santander.",
+      "emoji": "🥘"
+    },
+    {
+      "id": "card-011",
+      "name": "Hormiga Culona",
+      "type": "Frito",
+      "image": "/images/cards/hormiga-culona.webp",
+      "description": "Delicadeza tostada de Santander. Pequeña, crujiente y con más fuerza de la que aparenta.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Picotazo Tostado",
+          "baseDamage": 18
+        },
+        {
+          "id": "attack-02",
+          "name": "Enjambre Crujiente",
+          "baseDamage": 28
+        },
+        {
+          "id": "attack-03",
+          "name": "Salto Culón",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Colonia Furiosa",
+          "baseDamage": 52
+        }
+      ],
+      "defense": {
+        "name": "Caparazón Crocante",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Gran Marcha Santandereana",
+        "baseDamage": 61,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-frito.mp3",
+        "defense": "/sounds/defense-frito.mp3",
+        "special": "/sounds/special-frito.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Santander",
+      "fact": "Se come tostada con sal y es una de las delicadezas más famosas de Santander.",
+      "emoji": "🐜"
+    },
+    {
+      "id": "card-012",
+      "name": "Cabrito Santandereano",
+      "type": "Asado",
+      "image": "/images/cards/cabrito-santandereano.webp",
+      "description": "Asado a las brasas con pepitoria. Testarudo como buen santandereano.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Cornada Ahumada",
+          "baseDamage": 22
+        },
+        {
+          "id": "attack-02",
+          "name": "Brasa Ardiente",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Pepitoria Picante",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Embestida Cabruna",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Cuernos Cruzados",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Parrillada Brava",
+        "baseDamage": 70,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-asado.mp3",
+        "defense": "/sounds/defense-asado.mp3",
+        "special": "/sounds/special-asado.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Santander",
+      "fact": "El cabrito, a menudo con pepitoria, es un clásico de la cocina santandereana.",
+      "emoji": "🐐"
+    },
+    {
+      "id": "card-013",
+      "name": "Mojarra Frita",
+      "type": "Frito",
+      "image": "/images/cards/mojarra-frita.webp",
+      "description": "Pescado entero frito con patacón y limón, rey de las playas colombianas.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Coletazo Salado",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Patacón Volador",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Chorro de Limón",
+          "baseDamage": 38
+        },
+        {
+          "id": "attack-04",
+          "name": "Espina Afilada",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Escamas Brillantes",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Marea Caribeña",
+        "baseDamage": 63,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-frito.mp3",
+        "defense": "/sounds/defense-frito.mp3",
+        "special": "/sounds/special-frito.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Caribe",
+      "fact": "Se sirve entera, crocante, con patacón, arroz de coco y limón. Es la reina de las playas del Caribe.",
+      "emoji": "🐟"
+    },
+    {
+      "id": "card-014",
+      "name": "Changua",
+      "type": "Caldo",
+      "image": "/images/cards/changua.webp",
+      "description": "Sopa de leche y huevo con cilantro, el desayuno boyacense que despierta a cualquiera.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Gota de Leche",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Cilantro Cortante",
+          "baseDamage": 28
+        },
+        {
+          "id": "attack-03",
+          "name": "Huevo Pochado",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Ola Lechosa",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Manto Cremoso",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Madrugón Boyacense",
+        "baseDamage": 58,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-caldo.mp3",
+        "defense": "/sounds/defense-caldo.mp3",
+        "special": "/sounds/special-caldo.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Altiplano",
+      "fact": "Es una sopa de leche, huevo y cilantro: el desayuno clásico de Boyacá y Cundinamarca para espantar el frío.",
+      "emoji": "🥛"
+    },
+    {
+      "id": "card-015",
+      "name": "Cocada",
+      "type": "Dulce",
+      "image": "/images/cards/cocada.webp",
+      "description": "Dulce de coco rallado y panela. Pegajosa, resistente y difícil de sacarse de encima.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Coco Rallado",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Caramelo Pegajoso",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Golpe de Panela",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Cocotazo",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Caparazón de Coco",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Dulzura Caribeña",
+        "baseDamage": 65,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-dulce.mp3",
+        "defense": "/sounds/defense-dulce.mp3",
+        "special": "/sounds/special-dulce.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Caribe",
+      "fact": "Dulce de coco rallado con panela o azúcar, que se vende en las calles y playas de la Costa.",
+      "emoji": "🥥"
+    },
+    {
+      "id": "card-016",
+      "name": "Obleas con Arequipe",
+      "type": "Dulce",
+      "image": "/images/cards/obleas-con-arequipe.webp",
+      "description": "Dos hojas finas con arequipe y queso. Frágiles de apariencia, devastadoras de sabor.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Corte de Oblea",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Untada de Arequipe",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Crujido Dulce",
+          "baseDamage": 38
+        },
+        {
+          "id": "attack-04",
+          "name": "Sándwich Letal",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Doble Capa",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Empalague Supremo",
+        "baseDamage": 66,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-dulce.mp3",
+        "defense": "/sounds/defense-dulce.mp3",
+        "special": "/sounds/special-dulce.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Altiplano",
+      "fact": "Dos hojas finas rellenas de arequipe, con queso o mora si quieres. Un clásico de las esquinas bogotanas.",
+      "emoji": "🍪"
+    },
+    {
+      "id": "card-017",
+      "name": "Aguapanela con Limón",
+      "type": "Bebida",
+      "image": "/images/cards/aguapanela-con-limon.webp",
+      "description": "La bebida de todos los días: panela disuelta con limón. Energía pura en un vaso.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Salpicón de Panela",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Chorro de Limón",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Ola Dulce",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Vaso Lanzado",
+          "baseDamage": 48
+        }
+      ],
+      "defense": {
+        "name": "Dilución Protectora",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Subidón de Azúcar",
+        "baseDamage": 60,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-bebida.mp3",
+        "defense": "/sounds/defense-bebida.mp3",
+        "special": "/sounds/special-bebida.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Eje Cafetero",
+      "fact": "La panela, jugo de caña, es la energía del campo colombiano, y con limón sirve para el calor o el frío.",
+      "emoji": "🍋"
+    },
+    {
+      "id": "card-018",
+      "name": "Chocolate Santafereño",
+      "type": "Bebida",
+      "image": "/images/cards/chocolate-santafereno.webp",
+      "description": "Chocolate espeso con queso fundido, tradición bogotana bajo la lluvia.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Espuma Caliente",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Queso Derretido",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Molinillo Veloz",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Tazón Hirviente",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Capa de Espuma",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Tarde Bogotana",
+        "baseDamage": 64,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-bebida.mp3",
+        "defense": "/sounds/defense-bebida.mp3",
+        "special": "/sounds/special-bebida.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Altiplano",
+      "fact": "Chocolate espeso que se toma con queso fundido. Es una tradición bogotana para las tardes de lluvia.",
+      "emoji": "🍫"
+    },
+    {
+      "id": "card-019",
+      "name": "Champús",
+      "type": "Bebida",
+      "image": "/images/cards/champus.webp",
+      "description": "Bebida vallecaucana de maíz, lulo, piña y canela. Fresca, ácida y llena de sorpresas.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Gota de Lulo",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Maíz Fermentado",
+          "baseDamage": 28
+        },
+        {
+          "id": "attack-03",
+          "name": "Canela Punzante",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Torrente Frutal",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Pantalla de Piña",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Fiesta Vallecaucana",
+        "baseDamage": 62,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-bebida.mp3",
+        "defense": "/sounds/defense-bebida.mp3",
+        "special": "/sounds/special-bebida.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Valle del Cauca",
+      "fact": "Bebida vallecaucana de maíz, lulo, piña y canela: fresca, ácida y llena de sorpresas.",
+      "emoji": "🍹"
+    },
+    {
+      "id": "card-020",
+      "name": "Café Tinto",
+      "type": "Bebida",
+      "image": "/images/cards/cafe-tinto.webp",
+      "description": "El motor del país. Negro, intenso y capaz de despertar a un ejército.",
+      "hp": 250,
+      "attacks": [
+        {
+          "id": "attack-01",
+          "name": "Taza Ardiente",
+          "baseDamage": 20
+        },
+        {
+          "id": "attack-02",
+          "name": "Grano Tostado",
+          "baseDamage": 30
+        },
+        {
+          "id": "attack-03",
+          "name": "Cafeína Veloz",
+          "baseDamage": 40
+        },
+        {
+          "id": "attack-04",
+          "name": "Eje Cafetero",
+          "baseDamage": 50
+        }
+      ],
+      "defense": {
+        "name": "Filtro Impenetrable",
+        "damageReduction": 0.5
+      },
+      "special": {
+        "name": "Doble Tinto",
+        "baseDamage": 67,
+        "unlockTurn": 2,
+        "cooldown": 3
+      },
+      "sounds": {
+        "attack": "/sounds/attack-bebida.mp3",
+        "defense": "/sounds/defense-bebida.mp3",
+        "special": "/sounds/special-bebida.mp3",
+        "defeated": "/sounds/defeated.mp3"
+      },
+      "active": true,
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "region": "Eje Cafetero",
+      "fact": "El Paisaje Cultural Cafetero es Patrimonio de la Humanidad de la UNESCO. Aquí el tinto es el motor del país.",
+      "emoji": "☕"
+    }
+  ],
   "battles": []
 }

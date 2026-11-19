@@ -1,0 +1,28 @@
+import { deleteCard } from '../../api/cardsApi.js';
+import { abrirModal } from './cardForm.js';
+import { esc } from '../../utils/dom.js';
+
+/** DELETE: pide confirmación y elimina la carta. */
+export function eliminarCarta(host, card, onDone) {
+  const { box, cerrar } = abrirModal(
+    host,
+    `<div class="em">🗑️</div><h3>¿Eliminar carta?</h3>
+     <p>Se borrará <b>${esc(card.name)}</b> de forma permanente. Si solo quieres sacarla del juego, usa el interruptor "Activa" (PATCH).</p>
+     <p class="msg" id="formMsg" role="status"></p>
+     <div class="row end"><button class="btn" data-close>Cancelar</button><button class="btn danger" id="yes">Sí, eliminar (DELETE)</button></div>`
+  );
+  box.querySelector('[data-close]').onclick = cerrar;
+  box.querySelector('#yes').onclick = async () => {
+    const msg = box.querySelector('#formMsg');
+    msg.innerHTML = '<span class="spin"></span>Eliminando…';
+    try {
+      await deleteCard(card.id);
+      cerrar();
+      onDone(`✅ DELETE /cards/${card.id} → "${card.name}" eliminada.`);
+    } catch (error) {
+      console.error(error);
+      msg.className = 'msg err';
+      msg.textContent = 'No se pudo eliminar.';
+    }
+  };
+}

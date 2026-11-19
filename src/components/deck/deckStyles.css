@@ -1,0 +1,33 @@
+/* ===== Mesa oscura donde se ven las cartas ===== */
+.table,.board{background:radial-gradient(900px 420px at 50% 0%,#2b3170 0%,#10133a 55%,#0a0b20 100%);border-radius:24px;position:relative}
+.table{padding:26px 18px 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:26px 18px}
+.cw{position:relative}
+.cw .info{position:absolute;top:7px;right:7px;width:25px;height:25px;border-radius:50%;border:1.5px solid #17171f;background:#fff;z-index:7;font-size:.8rem;padding:0;box-shadow:0 2px 4px #0005}
+.cw .info:hover{background:var(--yellow)}
+.sel-chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.sel-chips span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 11px;font-size:.85rem;font-weight:800}
+.combo-line{margin:0 0 12px;padding:8px 14px;border-radius:14px;border:1px dashed #c9cfe8;font-size:.9rem}
+.combo-line.on{border:1px solid #9b78e8;background:#efe8ff;color:#47248f;font-weight:800}
+
+/* ===== Orden ===== */
+.olist{display:grid;gap:10px;margin:12px 0 16px}
+.oitem{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);border-left:10px solid var(--c);border-radius:16px;padding:8px 14px}
+.oitem .pos{font-family:'Anton';font-size:1.7rem;width:34px;text-align:center;color:var(--navy)}
+.oitem .em{font-size:2.1rem}
+.oitem .info{flex:1}
+.oitem .info b{font-family:'Zilla Slab';font-size:1.1rem}
+.oitem .info small{display:block;color:var(--muted);font-weight:700}
+.mv{display:flex;gap:6px}
+.mv button{width:38px;height:38px;border-radius:50%;border:2px solid var(--line);background:#fff;font-weight:800}
+.mv button:hover:not(:disabled){border-color:var(--navy)}
+.mv button:disabled{opacity:.3}
+
+@media (max-width:700px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:22px 12px}
+  .table{padding:20px 10px 22px}
+  .stepbar h2{font-size:1.5rem}
+}
+
+.row.end{justify-content:flex-end;margin-top:18px}
+.row.between{justify-content:space-between}

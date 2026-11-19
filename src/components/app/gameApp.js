@@ -1,0 +1,172 @@
+import './appStyles.css';
+import '../auth/playerRegister.js';
+import '../auth/adminLogin.js';
+import '../cards/cards.js';
+import '../deck/deckSelector.js';
+import '../battle/battle.js';
+import '../leaderboard/leaderboard.js';
+import { getPlayerById } from '../../api/playersApi.js';
+import { esc } from '../../utils/dom.js';
+import { isMuted, toggleMute } from '../../utils/audio.js';
+
+const PLAYER_KEY = 'cba:player'; // el jugador queda guardado en este navegador
+const ADMIN_KEY = 'cba:admin'; // la sesión de admin dura mientras la pestaña esté abierta
+
+const leer = (storage, key) => {
+  try {
+    return JSON.parse(storage.getItem(key));
+  } catch {
+    return null;
+  }
+};
+const guardar = (storage, key, value) => {
+  try {
+    value ? storage.setItem(key, JSON.stringify(value)) : storage.removeItem(key);
+  } catch {
+    /* sin almacenamiento: la sesión vive solo en memoria */
+  }
+};
+
+/**
+ * Componente raíz <card-game-app>: encabezado, navegación y cambio de vistas.
+ * Los demás componentes se comunican con él mediante eventos personalizados.
+ */
+export class GameApp extends HTMLElement {
+  constructor() {
+    super();
+    this.state = {
+      view: 'register', // register | pick | battle | ranking | admin
+      player: leer(localStorage, PLAYER_KEY),
+      admin: leer(sessionStorage, ADMIN_KEY),
+      deck: null,
+      inBattle: false,
+    };
+    this.render();
+    this.configurarEventos();
+    this.mostrar('register');
+    this.refrescarJugador();
+  }
+
+  render() {
+    this.innerHTML = /* html */ `
+      <div class="stage">
+        <div class="sheet">
+          <header class="top" id="top"></header>
+          <main id="main"></main>
+        </div>
+        <div class="foot">Card Battle Arena · Sabores de Colombia · Proyecto integrador JavaScript</div>
+      </div>`;
+    this.renderHeader();
+  }
+
+  renderHeader() {
+    const { view, player, admin, inBattle } = this.state;
+    const jugar = ['register', 'pick', 'battle'].includes(view);
+    this.querySelector('#top').innerHTML = /* html */ `
+      <div class="brand"><span class="flag"></span><b>Sabores de Colombia</b></div>
+      <nav>
+        ${player ? `<span class="chip">👤 ${esc(player.nickname)} · ${player.points} pts</span>` : ''}
+        <button class="nbtn ${jugar ? 'on' : ''}" data-nav="play" ${inBattle ? 'disabled' : ''}>Jugar</button>
+        <button class="nbtn ${view === 'ranking' ? 'on' : ''}" data-nav="rank" ${inBattle ? 'disabled' : ''}>Ranking</button>
+        <button class="nbtn ${view === 'admin' ? 'on' : ''}" data-nav="admin" ${inBattle ? 'disabled' : ''}>Admin${admin ? ' ✓' : ''}</button>
+        <button class="nbtn" data-nav="mute" title="Sonido" aria-label="Activar o silenciar sonido">${isMuted() ? '🔇' : '🔊'}</button>
+      </nav>`;
+  }
+
+  /** Cambia la vista principal. Cada vista es un Web Component distinto. */
+  mostrar(view) {
+    this.state.view = view;
+    const main = this.querySelector('#main');
+    const { player, admin, deck } = this.state;
+
+    if (view === 'register') {
+      main.innerHTML = '<player-register></player-register>';
+      main.firstElementChild.currentPlayer = player;
+    } else if (view === 'pick') {
+      main.innerHTML = '<deck-selector></deck-selector>';
+    } else if (view === 'battle') {
+      main.innerHTML = '<battle-arena></battle-arena>';
+      main.firstElementChild.start({ player, deck: deck.deck, pool: deck.pool });
+    } else if (view === 'ranking') {
+      main.innerHTML = '<game-leaderboard></game-leaderboard>';
+      main.firstElementChild.playerId = player?.id ?? null;
+    } else if (view === 'admin') {
+      main.innerHTML = admin ? '<cards-admin></cards-admin>' : '<admin-login></admin-login>';
+    }
+    this.renderHeader();
+  }
+
+  /** Vuelve a pedir el jugador a la API para mostrar sus puntos actuales. */
+  async refrescarJugador() {
+    const { player } = this.state;
+    if (!player) return;
+    try {
+      this.state.player = await getPlayerById(player.id);
+      guardar(localStorage, PLAYER_KEY, this.state.player);
+      this.renderHeader();
+      if (this.state.view === 'register') this.querySelector('player-register').currentPlayer = this.state.player;
+    } catch {
+      // Si el jugador ya no existe (base de datos reiniciada) se olvida; si no hay red, se conserva.
+      if (navigator.onLine !== false) {
+        /* error de red o 404: no se borra nada para no perder la sesión por un fallo temporal */
+      }
+    }
+  }
+
+  irAJugar() {
+    this.mostrar(this.state.player ? 'pick' : 'register');
+  }
+
+  configurarEventos() {
+    this.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-nav]');
+      if (!btn || btn.disabled) return;
+      const destino = btn.dataset.nav;
+      if (destino === 'mute') {
+        toggleMute();
+        btn.textContent = isMuted() ? '🔇' : '🔊';
+      } else if (destino === 'play') this.irAJugar();
+      else if (destino === 'rank') this.mostrar('ranking');
+      else if (destino === 'admin') this.mostrar('admin');
+    });
+
+    // ----- Eventos que llegan desde los componentes -----
+    this.addEventListener('player-registered', (e) => {
+      this.state.player = e.detail.player;
+      guardar(localStorage, PLAYER_KEY, this.state.player);
+      this.mostrar('pick');
+    });
+    this.addEventListener('player-continue', () => this.mostrar('pick'));
+    this.addEventListener('deck-ready', (e) => {
+      this.state.deck = e.detail;
+      this.mostrar('battle');
+    });
+    this.addEventListener('battle-state', (e) => {
+      this.state.inBattle = e.detail.active;
+      this.renderHeader();
+    });
+    this.addEventListener('battle-finished', (e) => {
+      this.state.player = e.detail.player;
+      guardar(localStorage, PLAYER_KEY, this.state.player);
+      this.renderHeader();
+    });
+    this.addEventListener('battle-abandoned', () => {
+      this.state.inBattle = false;
+      this.mostrar('pick');
+    });
+    this.addEventListener('play-again', () => this.mostrar('pick'));
+    this.addEventListener('go-ranking', () => this.mostrar('ranking'));
+    this.addEventListener('admin-login-success', (e) => {
+      this.state.admin = e.detail.admin;
+      guardar(sessionStorage, ADMIN_KEY, this.state.admin);
+      this.mostrar('admin');
+    });
+    this.addEventListener('admin-logout', () => {
+      this.state.admin = null;
+      guardar(sessionStorage, ADMIN_KEY, null);
+      this.mostrar('admin');
+    });
+  }
+}
+
+customElements.define('card-game-app', GameApp);
