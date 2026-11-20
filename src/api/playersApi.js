@@ -20,11 +20,12 @@ export async function getPlayerById(id) {
   return request(`/players/${id}`);
 }
 
-export async function postPlayer(nickname) {
+export async function postPlayer(nickname, avatar) {
   return request('/players', {
     method: 'POST',
     body: JSON.stringify({
       nickname: nickname.trim(),
+      avatar,
       points: 0,
       wins: 0,
       losses: 0,

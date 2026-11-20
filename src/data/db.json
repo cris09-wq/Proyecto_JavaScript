@@ -33,6 +33,36 @@
       "gamesPlayed": 0,
       "createdAt": "2026-11-19T22:50:03.511Z",
       "id": 4
+    },
+    {
+      "nickname": "DIANACH",
+      "avatar": "andina",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-20T11:32:51.399Z",
+      "id": 5
+    },
+    {
+      "nickname": "WWW",
+      "avatar": "andina",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-20T19:00:45.892Z",
+      "id": 6
+    },
+    {
+      "nickname": "AAAA",
+      "avatar": "pacifica",
+      "points": 50,
+      "wins": 1,
+      "losses": 0,
+      "gamesPlayed": 1,
+      "createdAt": "2026-11-20T20:11:54.349Z",
+      "id": 7
     }
   ],
   "cards": [
@@ -1057,5 +1087,29 @@
       "emoji": "☕"
     }
   ],
-  "battles": []
+  "battles": [
+    {
+      "playerId": 7,
+      "playerNickname": "AAAA",
+      "result": "win",
+      "pointsAwarded": 50,
+      "playerDeck": [
+        "card-002",
+        "card-008",
+        "card-014",
+        "card-009",
+        "card-015"
+      ],
+      "machineDeck": [
+        "card-007",
+        "card-016",
+        "card-003",
+        "card-018",
+        "card-012"
+      ],
+      "startedAt": "2026-11-20T20:12:02.719Z",
+      "endedAt": "2026-11-20T20:15:29.091Z",
+      "id": 1
+    }
+  ]
 }

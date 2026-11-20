@@ -6,7 +6,7 @@ import '../admin/adminPanel.js';
 import '../deck/deckSelector.js';
 import '../battle/battle.js';
 import '../leaderboard/leaderboard.js';
-import { getPlayerById } from '../../api/playersApi.js';
+import { getPlayerById, patchPlayer } from '../../api/playersApi.js';
 import { esc } from '../../utils/dom.js';
 import { isMuted, toggleMute } from '../../utils/audio.js';
 import { assetUrl } from '../../utils/assets.js';
@@ -28,6 +28,9 @@ const guardar = (storage, key, value) => {
     /* sin almacenamiento: la sesión vive solo en memoria */
   }
 };
+
+/** Conserva el avatar elegido si la API devuelve el jugador sin ese campo. */
+const conAvatar = (nuevo, anterior) => ({ ...nuevo, avatar: nuevo.avatar ?? anterior?.avatar });
 
 /**
  * Componente raíz <card-game-app>: encabezado, navegación y cambio de vistas.
@@ -113,7 +116,7 @@ export class GameApp extends HTMLElement {
     const { player } = this.state;
     if (!player) return;
     try {
-      this.state.player = await getPlayerById(player.id);
+      this.state.player = conAvatar(await getPlayerById(player.id), player);
       guardar(localStorage, PLAYER_KEY, this.state.player);
       this.renderHeader();
       if (this.state.view === 'register') this.querySelector('player-register').currentPlayer = this.state.player;
@@ -157,7 +160,16 @@ export class GameApp extends HTMLElement {
       guardar(localStorage, PLAYER_KEY, this.state.player);
       this.mostrar('pick');
     });
-    this.addEventListener('player-continue', () => this.mostrar('pick'));
+    this.addEventListener('player-continue', (e) => {
+      const { avatar } = e.detail ?? {};
+      const player = this.state.player;
+      if (avatar && avatar !== player.avatar) {
+        this.state.player = { ...player, avatar };
+        guardar(localStorage, PLAYER_KEY, this.state.player);
+        patchPlayer({ avatar }, player.id).catch((error) => console.error(error)); // se guarda también en la API
+      }
+      this.mostrar('pick');
+    });
     this.addEventListener('deck-ready', (e) => {
       this.state.deck = e.detail;
       this.mostrar('battle');
@@ -167,7 +179,7 @@ export class GameApp extends HTMLElement {
       this.renderHeader();
     });
     this.addEventListener('battle-finished', (e) => {
-      this.state.player = e.detail.player;
+      this.state.player = conAvatar(e.detail.player, this.state.player);
       guardar(localStorage, PLAYER_KEY, this.state.player);
       this.renderHeader();
     });

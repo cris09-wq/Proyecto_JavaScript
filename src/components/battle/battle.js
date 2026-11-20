@@ -5,6 +5,7 @@ import { addBattleResult } from '../../api/playersApi.js';
 import { postBattle } from '../../api/battlesApi.js';
 import { shuffle, playerStarts } from '../../utils/random.js';
 import { esc, sleep, emit } from '../../utils/dom.js';
+import { AVATAR_IDS, getAvatar, faceImg, bodyImg } from '../../assets/avatars.js';
 import { playSound, GAME_SOUNDS } from '../../utils/audio.js';
 import { createDeckStates, startOwnTurn, chooseMachineAction, resolveAction } from '../../utils/battleEngine.js';
 
@@ -67,6 +68,9 @@ export class BattleArena extends HTMLElement {
     const ids = deck.map((c) => c.id);
     const rivales = shuffle(pool.filter((c) => !ids.includes(c.id))).slice(0, 5); // la máquina elige 5 distintas
     const iniciaJugador = playerStarts();
+    // La máquina toma un avatar de otra región distinta a la del jugador
+    const otros = AVATAR_IDS.filter((id) => getAvatar(id) !== getAvatar(player.avatar));
+    this.avatars = { p: getAvatar(player.avatar), m: getAvatar(shuffle(otros)[0]) };
     const B = (this.B = {
       p: { deck: createDeckStates(deck), idx: 0 },
       m: { deck: createDeckStates(rivales), idx: 0 },
@@ -228,7 +232,23 @@ export class BattleArena extends HTMLElement {
     const texto = B.intro ? 'Sorteando quién inicia…' : B.over ? 'Combate terminado' : B.turn === 'p' ? '🟢 Tu turno' : '🔴 Turno de la máquina…';
     const bar = this.querySelector('#turnbar');
     bar.className = `turnbar ${B.over || B.intro ? '' : B.turn}`;
-    bar.innerHTML = `${texto}<small>Ronda ${round} · Turno ${B.turnCount + 1}</small>`;
+    // Avatar de quien tiene el turno: jugador a la izquierda, máquina a la derecha
+    const activo = B.over || B.intro ? null : B.turn;
+    if (!bar.querySelector('.tb-text')) {
+      bar.innerHTML = `<span class="tb-avatar p"></span><div class="tb-text"></div><span class="tb-avatar m"></span>`;
+    }
+    bar.querySelector('.tb-text').innerHTML = `${texto}<small>Ronda ${round} · Turno ${B.turnCount + 1}</small>`;
+    if (bar.dataset.activo !== String(activo)) {
+      // Solo se redibuja al cambiar de turno, así la animación no se repite en cada refresh
+      bar.dataset.activo = String(activo);
+      for (const side of ['p', 'm']) {
+        const slot = bar.querySelector(`.tb-avatar.${side}`);
+        const on = activo === side;
+        slot.classList.toggle('on', on);
+        slot.title = on ? `${side === 'p' ? this.player.nickname : 'Máquina'} · ${this.avatars[side].region}` : '';
+        slot.innerHTML = on ? faceImg(this.avatars[side]) : '';
+      }
+    }
 
     this.querySelector('#f-p').update({ cs: this.cur('p'), deck: B.p.deck, idx: B.p.idx, who: this.player.nickname });
     this.querySelector('#f-m').update({ cs: this.cur('m'), deck: B.m.deck, idx: B.m.idx, who: '🤖 Máquina' });
@@ -247,7 +267,13 @@ export class BattleArena extends HTMLElement {
     const B = this.B;
     if (B.intro) {
       const primero = B.turn === 'p' ? esc(this.player.nickname) : 'La máquina';
-      return `<div class="ov toss"><div class="ovbox"><div class="coin">🪙</div><h2>Sorteo</h2><p class="pts">Inicia: ${primero}</p></div></div>`;
+      return `<div class="ov toss"><div class="ovbox"><div class="coin">🪙</div><h2>Sorteo</h2>
+        <div class="ov-avatars">
+          <figure>${bodyImg(this.avatars.p)}<figcaption>${esc(this.player.nickname)}</figcaption></figure>
+          <span class="ov-vs">VS</span>
+          <figure>${bodyImg(this.avatars.m)}<figcaption>🤖 Máquina</figcaption></figure>
+        </div>
+        <p class="pts">Inicia: ${primero}</p></div></div>`;
     }
     if (!B.over) return '';
     if (B.saving) return `<div class="ov"><div class="ovbox"><span class="spin"></span>Guardando resultado…</div></div>`;
@@ -256,7 +282,7 @@ export class BattleArena extends HTMLElement {
       ? `<div class="confetti">${Array.from({ length: 26 }, (_, i) => `<i style="left:${Math.random() * 100}%;animation-duration:${1.6 + Math.random() * 1.8}s;animation-delay:${Math.random() * 0.8}s;font-size:${14 + Math.random() * 16}px">${['🎉', '⭐', '🍋', '🥑', '☕', '✨'][i % 6]}</i>`).join('')}</div>`
       : '';
     return `<div class="ov ${gano ? 'win' : 'lose'}"><div class="ovbox">${confeti}
-      <div class="em">${gano ? '🏆' : '😵'}</div>
+      <div class="ov-hero">${bodyImg(gano ? this.avatars.p : this.avatars.m)}<span class="em">${gano ? '🏆' : '😵'}</span></div>
       <h2>${gano ? '¡Victoria!' : 'Derrota'}</h2>
       <p class="muted">${gano ? 'Tu mazo dejó sin platos a la máquina.' : 'La máquina te dejó sin cartas esta vez.'}</p>
       <div class="pts">+${B.points} puntos</div>

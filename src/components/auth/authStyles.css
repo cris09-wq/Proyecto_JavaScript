@@ -100,3 +100,47 @@
   color: var(--muted);
   margin: 10px 0 0;
 }
+
+/* ===== Selector de avatar por región ===== */
+.avatar-title {
+  margin: 16px 0 8px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.avatar-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.avatar-opt {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 92px;
+  padding: 6px 4px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+.avatar-opt:hover {
+  transform: translateY(-2px);
+}
+.avatar-opt.on {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 2px var(--yellow);
+}
+.avatar-opt .avatar-body {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+}
