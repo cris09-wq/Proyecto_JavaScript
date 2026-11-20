@@ -63,6 +63,26 @@
       "gamesPlayed": 1,
       "createdAt": "2026-11-20T20:11:54.349Z",
       "id": 7
+    },
+    {
+      "nickname": "DAA",
+      "avatar": "caribe",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-20T20:21:35.585Z",
+      "id": 8
+    },
+    {
+      "nickname": "DIANAAAAA",
+      "avatar": "caribe",
+      "points": 50,
+      "wins": 1,
+      "losses": 0,
+      "gamesPlayed": 1,
+      "createdAt": "2026-11-20T20:47:37.302Z",
+      "id": 9
     }
   ],
   "cards": [
@@ -1110,6 +1130,29 @@
       "startedAt": "2026-11-20T20:12:02.719Z",
       "endedAt": "2026-11-20T20:15:29.091Z",
       "id": 1
+    },
+    {
+      "playerId": 9,
+      "playerNickname": "DIANAAAAA",
+      "result": "win",
+      "pointsAwarded": 50,
+      "playerDeck": [
+        "card-002",
+        "card-003",
+        "card-013",
+        "card-014",
+        "card-020"
+      ],
+      "machineDeck": [
+        "card-019",
+        "card-009",
+        "card-010",
+        "card-011",
+        "card-001"
+      ],
+      "startedAt": "2026-11-20T21:13:20.103Z",
+      "endedAt": "2026-11-20T21:15:24.410Z",
+      "id": 2
     }
   ]
 }

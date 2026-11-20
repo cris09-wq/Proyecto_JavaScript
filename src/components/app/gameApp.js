@@ -8,7 +8,7 @@ import '../battle/battle.js';
 import '../leaderboard/leaderboard.js';
 import { getPlayerById, patchPlayer } from '../../api/playersApi.js';
 import { esc } from '../../utils/dom.js';
-import { isMuted, toggleMute } from '../../utils/audio.js';
+import { isMuted, toggleMute, startMusicOnFirstInteraction, setMusicVolume } from '../../utils/audio.js';
 import { assetUrl } from '../../utils/assets.js';
 
 const PLAYER_KEY = 'cba:player'; // el jugador queda guardado en este navegador
@@ -53,6 +53,7 @@ export class GameApp extends HTMLElement {
     };
     this.render();
     this.configurarEventos();
+    startMusicOnFirstInteraction(); // música de fondo permanente
     this.mostrar('register');
     this.refrescarJugador();
   }
@@ -91,6 +92,7 @@ export class GameApp extends HTMLElement {
   /** Cambia la vista principal. Cada vista es un Web Component distinto. */
   mostrar(view) {
     this.state.view = view;
+    if (view !== 'battle') setMusicVolume(1); // fuera de la batalla, volumen normal
     const main = this.querySelector('#main');
     const { player, admin, deck } = this.state;
 
@@ -176,6 +178,7 @@ export class GameApp extends HTMLElement {
     });
     this.addEventListener('battle-state', (e) => {
       this.state.inBattle = e.detail.active;
+      setMusicVolume(e.detail.active ? 0.1 : 1); // durante la partida la música baja al 10 %
       this.renderHeader();
     });
     this.addEventListener('battle-finished', (e) => {
