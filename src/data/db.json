@@ -14,7 +14,8 @@
       "losses": 0,
       "gamesPlayed": 0,
       "createdAt": "2026-11-19T22:13:57.607Z",
-      "id": 2
+      "id": 2,
+      "avatar": "andina"
     },
     {
       "nickname": "ASD",
@@ -77,12 +78,40 @@
     {
       "nickname": "DIANAAAAA",
       "avatar": "caribe",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-20T20:47:37.302Z",
+      "id": 9
+    },
+    {
+      "nickname": "JHG",
       "points": 50,
       "wins": 1,
       "losses": 0,
       "gamesPlayed": 1,
-      "createdAt": "2026-11-20T20:47:37.302Z",
-      "id": 9
+      "createdAt": "2026-11-20T20:18:12.925Z",
+      "id": 10
+    },
+    {
+      "nickname": "VMH",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-20T20:25:31.294Z",
+      "id": 11
+    },
+    {
+      "nickname": "LLLL",
+      "avatar": "orinoquia",
+      "points": 50,
+      "wins": 1,
+      "losses": 0,
+      "gamesPlayed": 1,
+      "createdAt": "2026-11-20T21:29:42.456Z",
+      "id": 15
     }
   ],
   "cards": [
@@ -1153,6 +1182,29 @@
       "startedAt": "2026-11-20T21:13:20.103Z",
       "endedAt": "2026-11-20T21:15:24.410Z",
       "id": 2
+    },
+    {
+      "playerId": 15,
+      "playerNickname": "LLLL",
+      "result": "win",
+      "pointsAwarded": 50,
+      "playerDeck": [
+        "card-002",
+        "card-004",
+        "card-003",
+        "card-001",
+        "card-005"
+      ],
+      "machineDeck": [
+        "card-010",
+        "card-018",
+        "card-016",
+        "card-006",
+        "card-012"
+      ],
+      "startedAt": "2026-11-20T21:30:04.216Z",
+      "endedAt": "2026-11-20T21:32:38.460Z",
+      "id": 3
     }
   ]
 }

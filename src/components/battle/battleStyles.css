@@ -7,6 +7,10 @@
 .tb-avatar{flex:0 0 76px;width:76px;height:76px;margin:-22px 0;position:relative;z-index:2}
 .tb-avatar.on{animation:tbPop .4s ease-out}
 .tb-avatar .avatar-face{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 4px 6px #0006)}
+.tb-side{display:flex;align-items:center;gap:8px;flex:0 1 auto;min-width:0}
+.tb-hp{display:grid;justify-items:center;gap:2px;min-width:100px}
+.turnbar .hpwrap{width:100%;height:9px;background:#0003;border-color:#0004}
+.turnbar .hptxt{margin:0;font-size:.72rem;white-space:nowrap;color:var(--ink)}
 @keyframes tbPop{0%{transform:scale(.3) rotate(-12deg);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
 .turnbar{margin-top:22px;margin-bottom:24px}
 .ov-avatars{display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0}
@@ -16,17 +20,24 @@
 .ov-hero{position:relative;width:170px;height:170px;margin:0 auto}
 .ov-hero .avatar-body{width:100%;height:100%;object-fit:contain}
 .ov-hero .em{position:absolute;right:-6px;bottom:0;font-size:2.6rem}
-@media (max-width:520px){.tb-avatar{flex-basis:56px;width:56px;height:56px;margin:-14px 0}.turnbar{font-size:1.05rem}.ov-avatars .avatar-body{width:90px;height:90px}}
+@media (max-width:520px){.tb-avatar{flex-basis:56px;width:56px;height:56px;margin:-14px 0}.turnbar{font-size:1.05rem}.ov-avatars .avatar-body{width:90px;height:90px}.tb-hp{min-width:68px}.turnbar .hpwrap{height:7px}}
 .board{padding:18px 16px 16px}
 .arena{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .vs{position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);font-family:'Anton';font-size:1.3rem;background:var(--red);color:#fff;border-radius:50%;width:46px;height:46px;display:flex;align-items:center;justify-content:center;z-index:8;border:3px solid #fff;box-shadow:0 4px 10px #0008}
-.fighter{position:relative;max-width:290px;width:100%;margin:0 auto}
+.fighter{position:relative;max-width:230px;width:100%;margin:0 auto}
+.fightrow{position:relative;display:flex;align-items:stretch;gap:10px}
+.fightrow .card{flex:1 1 auto;max-width:210px;margin:0}
 .fhead{display:flex;justify-content:space-between;gap:8px;font-size:.78rem;font-weight:800;color:#c8ceff;margin-bottom:6px;padding:0 4px}
 .fhead .who{color:var(--yellow);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62%}
 .fighter.defending .cf{box-shadow:0 0 0 3px #4aa3ff,0 0 26px 6px #4aa3ffaa,0 12px 22px #0008}
 .fighter.defending .art .shield{display:flex;animation:pulse 1s ease-in-out infinite}
 .hud{background:#161a45;border:1px solid #2c3380;color:#fff;border-radius:16px;padding:9px 10px;margin-top:10px;text-align:center}
-.hud .row2{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:7px}
+.fightrow .status{position:absolute;left:4px;bottom:-12px;z-index:12;min-height:0;max-width:min(210px,calc(100% - 8px));margin:0;padding:4px 8px;border-radius:999px;background:#0b0e2ee6;border:1px solid #ffffff40;box-shadow:0 6px 16px #0007;gap:4px;flex-wrap:wrap;justify-content:flex-start;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s,visibility .25s}
+.fightrow .status.on{opacity:1;visibility:visible;transform:none;animation:tagIn .3s ease-out}
+@keyframes tagIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fighter > .deckstrip{position:absolute;top:0;z-index:15;margin:0;padding:3px;border-radius:12px;background:#0b0e2ecc;border:1px solid #ffffff33;box-shadow:0 4px 12px #0007;flex-direction:column;flex-wrap:nowrap;gap:4px}
+.fp > .deckstrip{right:calc(100% + 8px)}
+.fm > .deckstrip{left:calc(100% + 8px)}
 .badge{display:inline-block;font-size:.7rem;font-weight:800;border-radius:999px;padding:1px 9px;background:var(--c);color:#14141c;border:1px solid #14141c}
 .badge.rg{background:#fff}
 .hpwrap{height:15px;background:#0007;border-radius:999px;overflow:hidden;border:1px solid #000a}
@@ -100,6 +111,11 @@
 .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .confetti i{position:absolute;top:-30px;font-style:normal;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(520px) rotate(540deg);opacity:.2}}
+
+@media (max-width:900px){
+  .fightrow{flex-direction:column;align-items:center}
+  .fightrow .card{max-width:200px}
+}
 
 @media (max-width:700px){
   .arena{gap:8px}

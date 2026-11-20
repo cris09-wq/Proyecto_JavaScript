@@ -54,7 +54,7 @@ export class GameApp extends HTMLElement {
     this.render();
     this.configurarEventos();
     startMusicOnFirstInteraction(); // música de fondo permanente
-    this.mostrar('register');
+    this.mostrar(this.state.player ? 'pick' : 'register');
     this.refrescarJugador();
   }
 
@@ -163,8 +163,13 @@ export class GameApp extends HTMLElement {
       this.mostrar('pick');
     });
     this.addEventListener('player-continue', (e) => {
-      const { avatar } = e.detail ?? {};
+      const { avatar, player: entrante } = e.detail ?? {};
+      if (entrante) {
+        this.state.player = conAvatar(entrante, entrante);
+        guardar(localStorage, PLAYER_KEY, this.state.player);
+      }
       const player = this.state.player;
+      if (!player) return;
       if (avatar && avatar !== player.avatar) {
         this.state.player = { ...player, avatar };
         guardar(localStorage, PLAYER_KEY, this.state.player);

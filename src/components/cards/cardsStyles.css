@@ -286,10 +286,20 @@ button.card:hover {
   }
 }
 /* versión de combate: más arte, menos texto */
-.card.bt .cchips,
 .card.bt .meta,
 .card.bt .stats {
   display: none;
+}
+.card.bt .cchips {
+  top: auto;
+  bottom: 5%;
+  left: 7%;
+  right: 7%;
+  gap: 1cqw;
+}
+.card.bt .cchips em {
+  font-size: 4cqw;
+  padding: 0.6cqw 2.4cqw;
 }
 .card.bt .art {
   top: 28%;

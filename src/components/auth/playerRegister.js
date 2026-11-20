@@ -31,7 +31,8 @@ export class PlayerRegister extends HTMLElement {
           <p class="lead">Arma un mazo de 5 platos típicos, junta cartas de la misma región para activar el combo y derrota a la máquina. ¡Que gane el mejor sabor!</p>
           <form id="regForm" autocomplete="off" novalidate>
             <input id="nick" maxlength="16" placeholder="TU NICKNAME" aria-label="Nickname">
-            <button class="btn primary" id="regBtn" type="submit">Jugar</button>
+            <button class="btn primary" id="regBtn" type="submit">Crear jugador</button>
+            <button class="btn" id="loginBtn" type="button">Ingresar</button>
           </form>
           <p class="avatar-title">Elige tu avatar por región</p>
           <div class="avatar-picker" role="radiogroup" aria-label="Avatar por región">
@@ -70,6 +71,7 @@ export class PlayerRegister extends HTMLElement {
     this.addEventListener('click', (e) => {
       const opcion = e.target.closest('[data-avatar]');
       if (opcion) return this.elegirAvatar(opcion.dataset.avatar);
+      if (e.target.closest('#loginBtn')) return this.ingresar();
       if (e.target.closest('#again')) emit(this, 'player-continue', { avatar: this._avatar });
     });
   }
@@ -105,6 +107,31 @@ export class PlayerRegister extends HTMLElement {
     } catch (error) {
       console.error(error);
       this.mostrar('No se pudo registrar. ¿Está encendido el servidor (npm run server)?', 'err');
+      boton.disabled = false;
+    }
+  }
+
+  async ingresar() {
+    const boton = this.querySelector('#loginBtn');
+    const check = validateNickname(this.querySelector('#nick').value);
+    if (!check.ok) return this.mostrar(check.error, 'err');
+    const nickname = check.nickname.toUpperCase();
+
+    boton.disabled = true;
+    this.querySelector('#regMsg').className = 'msg';
+    this.querySelector('#regMsg').innerHTML = '<span class="spin"></span>Buscando jugador…';
+    try {
+      const existente = await findPlayerByNickname(nickname);
+      if (!existente) {
+        this.mostrar(`No existe el jugador "${nickname}". Créalo primero.`, 'err');
+        boton.disabled = false;
+        return;
+      }
+      this.mostrar(`¡Bienvenido de nuevo, ${nickname}!`, 'ok');
+      emit(this, 'player-continue', { player: existente, avatar: existente.avatar ?? DEFAULT_AVATAR });
+    } catch (error) {
+      console.error(error);
+      this.mostrar('No se pudo ingresar. ¿Está encendido el servidor (npm run server)?', 'err');
       boton.disabled = false;
     }
   }

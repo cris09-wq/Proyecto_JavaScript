@@ -224,6 +224,13 @@ export class BattleArena extends HTMLElement {
     this.refresh();
   }
 
+  hpHTML(side) {
+    const cs = this.cur(side);
+    const total = cs.card.hp;
+    const pct = Math.max(0, Math.round((cs.hp / total) * 100));
+    return `<div class="hpwrap" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${cs.hp}"><div class="hpbar ${pct < 30 ? 'low' : ''}" style="width:${pct}%"></div></div><span class="hptxt">${cs.hp} / ${total} HP</span>`;
+  }
+
   // ---------- Dibujo ----------
   refresh() {
     const B = this.B;
@@ -235,10 +242,13 @@ export class BattleArena extends HTMLElement {
     // Avatar de quien tiene el turno: jugador a la izquierda, máquina a la derecha
     const activo = B.over || B.intro ? null : B.turn;
     if (!bar.querySelector('.tb-text')) {
-      bar.innerHTML = `<span class="tb-avatar p"></span><div class="tb-text"></div><span class="tb-avatar m"></span>`;
+      bar.innerHTML = `<div class="tb-side p"><span class="tb-avatar p"></span><div class="tb-hp p"></div></div><div class="tb-text"></div><div class="tb-side m"><div class="tb-hp m"></div><span class="tb-avatar m"></span></div>`;
     }
+    bar.querySelector('.tb-hp.p').innerHTML = this.hpHTML('p');
+    bar.querySelector('.tb-hp.m').innerHTML = this.hpHTML('m');
     bar.querySelector('.tb-text').innerHTML = `${texto}<small>Ronda ${round} · Turno ${B.turnCount + 1}</small>`;
-    if (bar.dataset.activo !== String(activo)) {
+    const cambio = bar.dataset.activo !== String(activo);
+    if (cambio) {
       // Solo se redibuja al cambiar de turno, así la animación no se repite en cada refresh
       bar.dataset.activo = String(activo);
       for (const side of ['p', 'm']) {
@@ -252,6 +262,7 @@ export class BattleArena extends HTMLElement {
 
     this.querySelector('#f-p').update({ cs: this.cur('p'), deck: B.p.deck, idx: B.p.idx, who: this.player.nickname });
     this.querySelector('#f-m').update({ cs: this.cur('m'), deck: B.m.deck, idx: B.m.idx, who: '🤖 Máquina' });
+    if (cambio && activo) this.querySelector(activo === 'p' ? '#f-p' : '#f-m').anunciar(3000);
     this.querySelector('#controls').update({ cs: this.cur('p'), enabled: B.turn === 'p' && !B.lock && !B.over && !B.intro });
 
     this.querySelector('#log').innerHTML = B.log.slice(-6).map((l) => `<div>${esc(l)}</div>`).join('');

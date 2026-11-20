@@ -11,6 +11,8 @@ import { cardHTML, bindCardImageFallback } from '../cards/cardView.js';
 export class BattleCard extends HTMLElement {
   constructor() {
     super();
+    this._statusOn = false;
+    this._statusTimer = null;
     this.render();
     this.configurarEventos();
   }
@@ -21,6 +23,16 @@ export class BattleCard extends HTMLElement {
 
   configurarEventos() {
     bindCardImageFallback(this);
+  }
+
+  anunciar(ms = 3000) {
+    clearTimeout(this._statusTimer);
+    this._statusOn = true;
+    this.querySelector('.status')?.classList.add('on');
+    this._statusTimer = setTimeout(() => {
+      this._statusOn = false;
+      this.querySelector('.status')?.classList.remove('on');
+    }, ms);
   }
 
   /** Estado del indicador del poder especial. */
@@ -37,25 +49,22 @@ export class BattleCard extends HTMLElement {
    */
   update({ cs, deck, idx, who }) {
     const c = cs.card;
-    const pct = Math.max(0, Math.round((cs.hp / c.hp) * 100));
     this.style.setProperty('--c', typeColor(c.type));
     this.classList.toggle('defending', cs.isDefending);
     this.innerHTML = /* html */ `
+      <div class="deckstrip">${deck
+        .map((d, i) => `<span class="pip ${i === idx ? 'on' : ''} ${d.hp <= 0 ? 'dead' : ''}" title="${esc(d.card.name)}">${esc(d.card.emoji || '🍽️')}</span>`)
+        .join('')}</div>
       <div class="fhead"><span class="who">${esc(who)}</span><span>Carta ${Math.min(idx + 1, 5)}/5</span></div>
-      ${cardHTML(c, { cls: 'bt' })}
-      <div class="hud">
-        <div class="row2"><span class="badge">${esc(c.type)}</span><span class="badge rg">📍 ${esc(c.region)}</span></div>
-        <div class="hpwrap" role="progressbar" aria-valuemin="0" aria-valuemax="${c.hp}" aria-valuenow="${cs.hp}"><div class="hpbar ${pct < 30 ? 'low' : ''}" style="width:${pct}%"></div></div>
-        <div class="hptxt">${cs.hp} / ${c.hp} HP</div>
+      <div class="fightrow">
+        ${cardHTML(c, { cls: 'bt' })}
         <div class="status">
           ${cs.isDefending ? '<span class="tag def">🛡️ Defendiendo</span>' : ''}
           ${cs.hasCombo ? `<span class="tag combo">🔗 Combo ${esc(c.region)} +10%</span>` : ''}
           ${this.specialTag(cs)}
         </div>
-        <div class="deckstrip">${deck
-          .map((d, i) => `<span class="pip ${i === idx ? 'on' : ''} ${d.hp <= 0 ? 'dead' : ''}" title="${esc(d.card.name)}">${esc(d.card.emoji || '🍽️')}</span>`)
-          .join('')}</div>
       </div>`;
+    if (this._statusOn) this.querySelector('.status')?.classList.add('on');
   }
 
   /** Reinicia una clase de animación para poder repetirla. */
