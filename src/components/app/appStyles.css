@@ -327,3 +327,121 @@ game-leaderboard {
 .row.end {
   justify-content: flex-end;
 }
+/* ===== Hoja de vidrio esmerilado (pantalla de inicio) ===== */
+.sheet {
+  transition: background 0.35s, box-shadow 0.35s;
+}
+
+.sheet.glass {
+  background: linear-gradient(135deg, #ffffff73 0%, #ffffff4d 55%, #ffffff40 100%);
+  border: 1.5px solid #ffffff99;
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  box-shadow: 0 24px 60px #0d0f2b55, inset 0 1px 0 #ffffffb3;
+  padding: 22px 34px 34px;
+}
+
+.sheet.glass .top {
+  padding-bottom: 18px;
+}
+
+.sheet.glass .nbtn {
+  color: #141833;
+  font-size: 1.05rem;
+}
+
+.sheet.glass .nbtn.on {
+  border-bottom-color: #fff;
+}
+
+.sheet.glass .nbtn:hover {
+  border-bottom-color: #ffffffb3;
+}
+
+.sheet.glass .chip {
+  background: #ffffff66;
+  border-color: #ffffffb3;
+}
+
+@media (max-width: 700px) {
+  .sheet.glass {
+    padding: 16px 16px 24px;
+  }
+}
+
+/* ===== Hoja de vidrio oscuro (ranking) ===== */
+.sheet.glass-dark {
+  background: linear-gradient(160deg, #1b2a4a8c 0%, #141d3a73 55%, #0d0f2b66 100%);
+  border: 1.5px solid #ffffff4d;
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  box-shadow: 0 24px 60px #0008, inset 0 1px 0 #ffffff40;
+  color: #fff;
+  padding: 22px 34px 34px;
+}
+
+.sheet.glass-dark .top {
+  padding-bottom: 18px;
+}
+
+.sheet.glass-dark .brand b {
+  color: #fff;
+  text-shadow: 0 1px 6px #0008;
+}
+
+.sheet.glass-dark .nbtn {
+  color: #ffffffb3;
+  font-size: 1.05rem;
+}
+
+.sheet.glass-dark .nbtn.on {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+.sheet.glass-dark .nbtn:hover {
+  color: #fff;
+  border-bottom-color: #ffffff80;
+}
+
+.sheet.glass-dark .chip {
+  background: #ffffff26;
+  border-color: #ffffff59;
+  color: #fff;
+}
+
+.sheet.glass-dark .eyebrow {
+  color: #ffffffd9;
+}
+
+.sheet.glass-dark .stepbar h2 {
+  font-family: "Roboto Slab", "Zilla Slab", Georgia, serif;
+  font-weight: 800;
+  font-size: 2.3rem;
+  color: #fff;
+  text-shadow: 0 2px 10px #0008;
+}
+
+.sheet.glass-dark .panel {
+  background: #ffffff1f;
+  border-color: #ffffff40;
+  color: #fff;
+}
+
+@media (max-width: 700px) {
+  .sheet.glass-dark {
+    padding: 16px 14px 24px;
+  }
+}
+
+/* Paneles y chips translúcidos dentro de la hoja de vidrio claro (elegir cartas, admin) */
+.sheet.glass .panel {
+  background: #ffffff59;
+  border-color: #ffffffb3;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.sheet.glass .stepbar h2 {
+  color: #141833;
+}

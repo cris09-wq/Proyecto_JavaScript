@@ -44,12 +44,13 @@ export class GameLeaderboard extends HTMLElement {
     const puesto = (p, pos) =>
       p
         ? `<div class="pd p${pos} ${p.id === yo ? 'me' : ''}">
-            <div class="medal">${['🥇', '🥈', '🥉'][pos - 1]}</div>
+            ${pos === 1 ? '<span class="sparks" aria-hidden="true"></span>' : ''}
+            <div class="medal" aria-label="Puesto ${pos}"><span>${pos}</span></div>
             <div class="nk">${esc(p.nickname)}</div>
-            <div class="pt">${p.points}</div><small>puntos</small>
+            <div class="pt">${p.points}</div><small class="lbl">puntos</small>
             <small>🏅 ${p.wins} victorias</small><small>🎮 ${p.gamesPlayed} partidas</small>
           </div>`
-        : `<div class="pd p${pos}"><div class="medal">❔</div><small>Libre</small></div>`;
+        : `<div class="pd p${pos} empty"><div class="q">?</div><small>Libre</small></div>`;
 
     this.innerHTML = /* html */ `
       <div class="stepbar"><div><div class="eyebrow">CLASIFICACIÓN</div><h2>Leaderboard</h2></div></div>

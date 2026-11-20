@@ -39,11 +39,6 @@ const conAvatar = (nuevo, anterior) => ({ ...nuevo, avatar: nuevo.avatar ?? ante
 export class GameApp extends HTMLElement {
   constructor() {
     super();
-    // Fondo del juego: velo azul marino encima de la foto
-    document.body.style.background = `
-        linear-gradient(rgba(13, 15, 43, 0.5), rgba(27, 36, 103, 0.7)),
-        url("${assetUrl('/images/fondo.jpg')}") center / cover fixed,
-        var(--navy)`;
     this.state = {
       view: 'register', // register | pick | battle | ranking | admin
       player: leer(localStorage, PLAYER_KEY),
@@ -92,6 +87,7 @@ export class GameApp extends HTMLElement {
   /** Cambia la vista principal. Cada vista es un Web Component distinto. */
   mostrar(view) {
     this.state.view = view;
+    this.aplicarFondo(view);
     if (view !== 'battle') setMusicVolume(1); // fuera de la batalla, volumen normal
     const main = this.querySelector('#main');
     const { player, admin, deck } = this.state;
@@ -111,6 +107,28 @@ export class GameApp extends HTMLElement {
       main.innerHTML = admin ? '<admin-panel></admin-panel>' : '<admin-login></admin-login>';
     }
     this.renderHeader();
+  }
+
+  /**
+   * Fondo del juego: foto del pueblo con un velo azul marino.
+   * En el inicio el velo es más suave y la hoja se vuelve de vidrio esmerilado.
+   */
+  aplicarFondo(view) {
+    // Vidrio claro: inicio, elegir cartas y admin
+    const inicio = ['register', 'pick', 'admin'].includes(view);
+    const ranking = view === 'ranking';
+    const velo = inicio
+      ? 'rgba(13, 15, 43, 0.12), rgba(27, 36, 103, 0.3)'
+      : ranking
+        ? 'rgba(13, 15, 43, 0.25), rgba(27, 36, 103, 0.45)'
+        : 'rgba(13, 15, 43, 0.5), rgba(27, 36, 103, 0.7)';
+    document.body.style.background = `
+        linear-gradient(${velo}),
+        url("${assetUrl('/images/fondo.jpg')}") center / cover fixed,
+        var(--navy)`;
+    const sheet = this.querySelector('.sheet');
+    sheet?.classList.toggle('glass', inicio);
+    sheet?.classList.toggle('glass-dark', ranking); // vidrio oscuro para el ranking
   }
 
   /** Vuelve a pedir el jugador a la API para mostrar sus puntos actuales. */
