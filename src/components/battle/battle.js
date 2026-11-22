@@ -32,13 +32,20 @@ export class BattleArena extends HTMLElement {
   render() {
     this.innerHTML = /* html */ `
       <div class="turnbar" id="turnbar"></div>
-      <div class="board"><div class="arena">
-        <battle-card class="fighter fp" id="f-p"></battle-card>
-        <div class="vs">VS</div>
-        <battle-card class="fighter fm" id="f-m"></battle-card>
-      </div></div>
-      <battle-controls id="controls"></battle-controls>
-      <div class="log" id="log"></div>
+      <div class="blayout">
+        <div class="bmain">
+          <div class="board"><div class="arena">
+            <battle-card class="fighter fp" id="f-p"></battle-card>
+            <div class="vs">VS</div>
+            <battle-card class="fighter fm" id="f-m"></battle-card>
+          </div></div>
+          <battle-controls id="controls"></battle-controls>
+        </div>
+        <aside class="logbox">
+          <h3>📜 Historial</h3>
+          <div class="log" id="log"></div>
+        </aside>
+      </div>
       <div class="row end" id="quitRow"></div>
       <div id="overlay"></div>`;
   }
@@ -265,7 +272,10 @@ export class BattleArena extends HTMLElement {
     if (cambio && activo) this.querySelector(activo === 'p' ? '#f-p' : '#f-m').anunciar(3000);
     this.querySelector('#controls').update({ cs: this.cur('p'), enabled: B.turn === 'p' && !B.lock && !B.over && !B.intro });
 
-    this.querySelector('#log').innerHTML = B.log.slice(-6).map((l) => `<div>${esc(l)}</div>`).join('');
+    // Historial completo con la jugada más reciente arriba
+    const log = this.querySelector('#log');
+    log.innerHTML = [...B.log].reverse().map((l) => `<div>${esc(l)}</div>`).join('');
+    log.scrollTop = 0;
     this.querySelector('#quitRow').innerHTML = B.over
       ? ''
       : B.ask

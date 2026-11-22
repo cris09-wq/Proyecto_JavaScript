@@ -32,12 +32,27 @@
 .fighter.defending .cf{box-shadow:0 0 0 3px #4aa3ff,0 0 26px 6px #4aa3ffaa,0 12px 22px #0008}
 .fighter.defending .art .shield{display:flex;animation:pulse 1s ease-in-out infinite}
 .hud{background:#161a45;border:1px solid #2c3380;color:#fff;border-radius:16px;padding:9px 10px;margin-top:10px;text-align:center}
-.fightrow .status{position:absolute;left:4px;bottom:-12px;z-index:12;min-height:0;max-width:min(210px,calc(100% - 8px));margin:0;padding:4px 8px;border-radius:999px;background:#0b0e2ee6;border:1px solid #ffffff40;box-shadow:0 6px 16px #0007;gap:4px;flex-wrap:wrap;justify-content:flex-start;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s,visibility .25s}
+.fightrow .status{position:absolute;left:18px;bottom:-12px;z-index:12;min-height:0;max-width:min(200px,calc(100% - 22px));margin:0;padding:6px 8px;border-radius:10px;background:#fbf8f1f2;border:1px solid #14141c26;box-shadow:0 6px 16px #0005;gap:4px;flex-wrap:wrap;justify-content:flex-start;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(8px);transition:opacity .25s,transform .25s,visibility .25s}
 .fightrow .status.on{opacity:1;visibility:visible;transform:none;animation:tagIn .3s ease-out}
+/* Notificaciones sobre la carta: tonos claros para que no pesen sobre el fondo oscuro */
+.fightrow .status .tag{border-color:#14141c1f;background:#eef0fa;color:#3d4470}
+.fightrow .status .tag.def{background:#e3f0ff;border-color:#4aa3ff;color:#1d4f8f}
+.fightrow .status .tag.combo{background:#f1e9ff;border-color:#b58cff;color:#5a2fa8}
+.fightrow .status .tag.ready{background:#fff3c4;border-color:#e3b400;color:#6b5200}
+/* En pantallas anchas los avisos salen al costado libre de la carta (debajo del mazo) */
+@media (min-width:901px){
+  .fightrow .status{bottom:0;flex-direction:column;align-items:flex-start;width:max-content;max-width:170px}
+  /* Los avisos van hacia el centro (el costado exterior lo ocupa el mazo) */
+  .fp .fightrow .status{left:calc(100% + 8px);right:auto}
+  .fm .fightrow .status{right:calc(100% + 8px);left:auto;align-items:flex-end}
+  /* El mazo ocupa todo el alto de la carta, con las 5 casillas repartidas */
+  .fightrow > .deckstrip{bottom:0;width:46px;padding:5px;gap:5px}
+  .fightrow > .deckstrip .pip{flex:1 1 0;width:100%;height:auto;min-height:0;font-size:1.3rem}
+}
 @keyframes tagIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.fighter > .deckstrip{position:absolute;top:0;z-index:15;margin:0;padding:3px;border-radius:12px;background:#0b0e2ecc;border:1px solid #ffffff33;box-shadow:0 4px 12px #0007;flex-direction:column;flex-wrap:nowrap;gap:4px}
-.fp > .deckstrip{right:calc(100% + 8px)}
-.fm > .deckstrip{left:calc(100% + 8px)}
+.fightrow > .deckstrip{position:absolute;top:0;z-index:15;margin:0;padding:3px;border-radius:12px;background:#0b0e2ecc;border:1px solid #ffffff33;box-shadow:0 4px 12px #0007;flex-direction:column;flex-wrap:nowrap;gap:4px}
+.fp .fightrow > .deckstrip{right:calc(100% + 8px)}
+.fm .fightrow > .deckstrip{left:calc(100% + 8px)}
 .badge{display:inline-block;font-size:.7rem;font-weight:800;border-radius:999px;padding:1px 9px;background:var(--c);color:#14141c;border:1px solid #14141c}
 .badge.rg{background:#fff}
 .hpwrap{height:15px;background:#0007;border-radius:999px;overflow:hidden;border:1px solid #000a}
@@ -69,6 +84,36 @@
 .log{margin-top:14px;background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:10px 14px;font-size:.85rem;min-height:104px}
 .log div{padding:1px 0;color:var(--muted);font-weight:600}
 .log div:last-child{color:var(--ink);font-weight:800}
+
+/* ===== Tablero: vidrio oscuro translúcido con los colores de la bandera ===== */
+.board{
+  background:
+    linear-gradient(180deg,#fcd11638 0%,#fcd1161f 40%,#00389347 70%,#ce112638 100%),
+    #0d0f2ba6;
+  border:1px solid #ffffff2e;
+  box-shadow:0 10px 30px #0d0f2b44,inset 0 1px 0 #ffffff26;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+/* Textos claros sobre el vidrio oscuro */
+.fhead{color:#e6e9ff}
+.fhead .who{color:var(--yellow)}
+
+/* ===== Historial a la derecha de la partida ===== */
+.blayout{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.logbox{margin-top:14px;background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:10px 14px;display:flex;flex-direction:column;min-height:0}
+.logbox h3{font-size:1rem;margin:0 0 6px;color:var(--navy)}
+.logbox .log{margin:0;padding:0 4px 0 0;background:none;border:0;border-radius:0;min-height:0;max-height:180px;overflow-y:auto;scroll-behavior:smooth}
+.logbox .log div{padding:4px 0;border-bottom:1px dashed var(--line)}
+.logbox .log div:last-child{border-bottom:0}
+/* La más reciente va arriba y resaltada */
+.logbox .log div:last-child:not(:first-child){color:var(--muted);font-weight:600}
+.logbox .log div:first-child{color:var(--ink);font-weight:800}
+@media (min-width:1000px){
+  .blayout{grid-template-columns:minmax(0,1fr) 270px;align-items:start}
+  .logbox{margin-top:0;position:sticky;top:12px;min-height:320px;max-height:calc(100vh - 24px)}
+  .logbox .log{max-height:none;flex:1;overflow-y:auto}
+}
 
 /* ===== Animaciones disparadas desde JS ===== */
 .fp.anim-attack{animation:lunge-r .5s ease}

@@ -445,3 +445,22 @@ game-leaderboard {
 .sheet.glass .stepbar h2 {
   color: #141833;
 }
+
+/* ===== Hoja ancha para la batalla (tablero + historial a la derecha) ===== */
+.sheet.wide {
+  max-width: 1480px;
+  overflow: clip; /* recorta igual que hidden, pero deja funcionar el historial "sticky" */
+}
+
+/* ===== Pantalla de inicio centrada verticalmente ===== */
+.stage.centrada {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.stage.centrada .sheet,
+.stage.centrada .foot {
+  width: 100%;
+}

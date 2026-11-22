@@ -3,7 +3,7 @@ import { assetUrl } from './assets.js';
 // Efectos de sonido. Las rutas de cada carta vienen de card.sounds (db.json);
 // victoria y derrota son sonidos generales del juego.
 export const GAME_SOUNDS = {
-  victory: '/sounds/victory.mp3',
+  victory: '/sounds/viva-colombia-viva-falcao.mp3',
   defeat: '/sounds/defeat.mp3',
 };
 

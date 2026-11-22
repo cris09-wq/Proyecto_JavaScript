@@ -52,11 +52,11 @@ export class BattleCard extends HTMLElement {
     this.style.setProperty('--c', typeColor(c.type));
     this.classList.toggle('defending', cs.isDefending);
     this.innerHTML = /* html */ `
-      <div class="deckstrip">${deck
-        .map((d, i) => `<span class="pip ${i === idx ? 'on' : ''} ${d.hp <= 0 ? 'dead' : ''}" title="${esc(d.card.name)}">${esc(d.card.emoji || '🍽️')}</span>`)
-        .join('')}</div>
       <div class="fhead"><span class="who">${esc(who)}</span><span>Carta ${Math.min(idx + 1, 5)}/5</span></div>
       <div class="fightrow">
+        <div class="deckstrip">${deck
+          .map((d, i) => `<span class="pip ${i === idx ? 'on' : ''} ${d.hp <= 0 ? 'dead' : ''}" title="${esc(d.card.name)}">${esc(d.card.emoji || '🍽️')}</span>`)
+          .join('')}</div>
         ${cardHTML(c, { cls: 'bt' })}
         <div class="status">
           ${cs.isDefending ? '<span class="tag def">🛡️ Defendiendo</span>' : ''}

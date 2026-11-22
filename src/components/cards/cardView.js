@@ -30,6 +30,20 @@ export function cardNumber(card) {
   return digits ? String(parseInt(digits[1], 10)).padStart(2, '0') : '★'; // ids sin número (cartas nuevas de la API)
 }
 
+/** Barra de habilidades: vida, rango de ataque y poder especial, cada una en su recuadro. */
+function statsHTML(card) {
+  const danos = card.attacks.map((a) => a.baseDamage);
+  const ataque = `${Math.min(...danos)}–${Math.max(...danos)}`;
+  const detalle = card.attacks.map((a) => `${a.name}: ${a.baseDamage}`).join(' · ');
+  const stat = (cls, icono, valor, etiqueta, title) =>
+    `<span class="st ${cls}" title="${esc(title)}"><b><i>${icono}</i>${valor}</b><small>${etiqueta}</small></span>`;
+  return `<span class="stats">
+      ${stat('hp', '❤️', card.hp, 'Vida', `Vida: ${card.hp}`)}
+      ${stat('atk', '⚔️', ataque, 'Ataque', `Ataques — ${detalle}`)}
+      ${stat('sp', '⚡', card.special.baseDamage, 'Especial', `${card.special.name}: ${card.special.baseDamage}`)}
+    </span>`;
+}
+
 /**
  * HTML de una carta estilo baraja.
  * opts: { tag, cls, attr, tick, flipped }
@@ -56,8 +70,8 @@ export function cardHTML(card, opts = {}) {
     : `${deco}
       <span class="art ${hasImg ? 'has-img' : ''}">${art}<span class="shield">🛡️</span></span>
       <span class="cchips"><em>${esc(card.type)}</em><em class="rg">📍 ${esc(card.region)}</em></span>
-      <span class="meta"><b>${num}</b><span class="dsc">${esc(card.description)}</span></span>
-      <span class="stats">❤️ ${card.hp} · ⚔️ ${card.attacks.map((a) => a.baseDamage).join('/')} · ⚡ ${card.special.baseDamage}</span>`;
+      <span class="meta"><span class="dsc">${esc(card.description)}</span></span>
+      ${statsHTML(card)}`;
 
   return `<${tag} class="card ${opts.cls || ''}" style="--c:${typeColor(card.type)}" ${opts.attr || ''}>
     <span class="cf ${opts.flipped ? '' : 'fr'} ${hasImg && !opts.flipped ? 'im' : ''}">${face}</span>

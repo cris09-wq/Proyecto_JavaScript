@@ -46,6 +46,26 @@
       "gamesPlayed": 0,
       "createdAt": "2026-11-20T22:47:15.104Z",
       "id": 5
+    },
+    {
+      "nickname": "MAR",
+      "avatar": "pacifica",
+      "points": 50,
+      "wins": 1,
+      "losses": 0,
+      "gamesPlayed": 1,
+      "createdAt": "2026-11-22T00:39:16.730Z",
+      "id": 6
+    },
+    {
+      "nickname": "MARGARITA",
+      "avatar": "amazonia",
+      "points": 50,
+      "wins": 1,
+      "losses": 0,
+      "gamesPlayed": 1,
+      "createdAt": "2026-11-22T00:59:04.428Z",
+      "id": 7
     }
   ],
   "cards": [
@@ -1116,6 +1136,52 @@
       "startedAt": "2026-11-20T22:39:25.413Z",
       "endedAt": "2026-11-20T22:43:04.100Z",
       "id": 2
+    },
+    {
+      "playerId": 6,
+      "playerNickname": "MAR",
+      "result": "win",
+      "pointsAwarded": 50,
+      "playerDeck": [
+        "card-007",
+        "card-008",
+        "card-005",
+        "card-009",
+        "card-016"
+      ],
+      "machineDeck": [
+        "card-004",
+        "card-010",
+        "card-013",
+        "card-011",
+        "card-017"
+      ],
+      "startedAt": "2026-11-22T00:39:57.462Z",
+      "endedAt": "2026-11-22T00:43:50.551Z",
+      "id": 3
+    },
+    {
+      "playerId": 7,
+      "playerNickname": "MARGARITA",
+      "result": "win",
+      "pointsAwarded": 50,
+      "playerDeck": [
+        "card-018",
+        "card-014",
+        "card-015",
+        "card-020",
+        "card-016"
+      ],
+      "machineDeck": [
+        "card-005",
+        "card-009",
+        "card-007",
+        "card-012",
+        "card-002"
+      ],
+      "startedAt": "2026-11-22T00:59:15.515Z",
+      "endedAt": "2026-11-22T01:02:26.592Z",
+      "id": 4
     }
   ]
 }
