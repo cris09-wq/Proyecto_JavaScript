@@ -1,3 +1,6 @@
+// =============================================================================
+// battleControls.js — Botones de acción del jugador <battle-controls>
+// =============================================================================
 import { esc, emit } from '../../utils/dom.js';
 import { isSpecialUnlocked, isSpecialReady } from '../../utils/battleEngine.js';
 
@@ -9,6 +12,7 @@ export class BattleControls extends HTMLElement {
     this.configurarEventos();
   }
 
+  // Empieza vacío; battle.js llama a update() para dibujar los botones.
   render() {
     this.innerHTML = '';
   }
@@ -17,8 +21,12 @@ export class BattleControls extends HTMLElement {
     this.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-act]');
       if (!btn || btn.disabled) return;
+      // data-act puede ser: "a0", "a1"... (ataques), "def" (defensa) o "sp" (especial).
       const a = btn.dataset.act;
+      // Convertimos ese texto en un objeto acción. Para ataques, a.slice(1) quita
+      // la "a" y Number() convierte "2" en el número 2 (el índice del ataque).
       const action = a === 'def' ? { type: 'defend' } : a === 'sp' ? { type: 'special' } : { type: 'attack', index: Number(a.slice(1)) };
+      // Avisamos a battle.js qué acción eligió el jugador.
       emit(this, 'battle-action', { action });
     });
   }
@@ -27,11 +35,14 @@ export class BattleControls extends HTMLElement {
   update({ cs, enabled }) {
     const c = cs.card;
     const ready = isSpecialReady(cs);
+    // Texto pequeño bajo el botón especial, según su estado.
     let nota;
     if (!isSpecialUnlocked(cs)) nota = `🔒 Bloqueado · se habilita en el ${c.special.unlockTurn}.º turno de esta carta`;
     else if (cs.cooldown > 0) nota = `🔒 Bloqueado · faltan ${cs.cooldown} turno${cs.cooldown > 1 ? 's' : ''}`;
     else nota = `Daño ~${c.special.baseDamage}`;
 
+    // Un botón por ataque (con .map), uno de defensa y uno de especial.
+    // Si `enabled` es false, se agrega el atributo `disabled` (botón desactivado).
     this.innerHTML = /* html */ `
       <section class="controls">
         <h3>Acciones de ${esc(c.name)}</h3>

@@ -1,5 +1,9 @@
+// =============================================================================
+// playersApi.js — Funciones para trabajar con los jugadores (/players)
+// =============================================================================
 import { request } from './apiConfig.js';
 
+// GET /players → lista de todos los jugadores.
 export async function getPlayers() {
   return request('/players');
 }
@@ -11,7 +15,10 @@ export async function getPlayers() {
  */
 export async function findPlayerByNickname(nickname) {
   const players = await getPlayers();
+  // Pasamos el nombre buscado a minúsculas y sin espacios para comparar
+  // "Diana", "diana " y "DIANA" como si fueran el mismo.
   const wanted = nickname.trim().toLowerCase();
+  // Si .find() no encuentra nada devuelve undefined; con `?? null` devolvemos null.
   return players.find((p) => p.nickname.trim().toLowerCase() === wanted) ?? null;
 }
 
@@ -20,21 +27,23 @@ export async function getPlayerById(id) {
   return request(`/players/${id}`);
 }
 
+// POST /players → crea un jugador nuevo con sus estadísticas en cero.
 export async function postPlayer(nickname, avatar) {
   return request('/players', {
     method: 'POST',
     body: JSON.stringify({
       nickname: nickname.trim(),
       avatar,
-      points: 0,
-      wins: 0,
-      losses: 0,
-      gamesPlayed: 0,
+      points: 0,      // puntos acumulados
+      wins: 0,        // partidas ganadas
+      losses: 0,      // partidas perdidas
+      gamesPlayed: 0, // partidas jugadas en total
       createdAt: new Date().toISOString(),
     }),
   });
 }
 
+// PATCH /players/:id → modifica solo los campos que enviemos en `data`.
 export async function patchPlayer(data, id) {
   return request(`/players/${id}`, {
     method: 'PATCH',
@@ -42,6 +51,7 @@ export async function patchPlayer(data, id) {
   });
 }
 
+// DELETE /players/:id → elimina al jugador.
 export async function deletePlayer(id) {
   return request(`/players/${id}`, { method: 'DELETE' });
 }
@@ -49,9 +59,14 @@ export async function deletePlayer(id) {
 /**
  * Suma el resultado de una partida al jugador (puntos acumulativos).
  * Lee el estado actual del servidor para no pisar datos de otra pestaña.
+ *
+ * @param {string}  playerId Id del jugador.
+ * @param {boolean} didWin   true si ganó, false si perdió.
  */
 export async function addBattleResult(playerId, didWin) {
+  // 1) Pedimos los datos más recientes del jugador.
   const current = await request(`/players/${playerId}`);
+  // 2) Calculamos los nuevos valores sumando a los actuales y los guardamos.
   return patchPlayer(
     {
       points: current.points + (didWin ? 50 : 10),

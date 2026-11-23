@@ -1,3 +1,6 @@
+// =============================================================================
+// leaderboard.js — Tabla de clasificación <game-leaderboard>
+// =============================================================================
 import './leaderboardStyles.css';
 import { getPlayers } from '../../api/playersApi.js';
 import { esc } from '../../utils/dom.js';
@@ -15,11 +18,13 @@ export class GameLeaderboard extends HTMLElement {
     this.cargar();
   }
 
+  // Mientras carga, mostramos un mensaje con un ícono giratorio.
   render() {
     this.innerHTML = `<section class="panel"><span class="spin"></span>Cargando ranking…</section>`;
   }
 
   configurarEventos() {
+    // Botón "Reintentar" si la carga falló.
     this.addEventListener('click', (e) => {
       if (e.target.closest('[data-act="retry"]')) {
         this.render();
@@ -39,8 +44,11 @@ export class GameLeaderboard extends HTMLElement {
   }
 
   pintar(jugadores) {
+    // Ordenamos de mayor a menor puntaje; si empatan, gana quien tenga más victorias.
+    // (b - a ordena de mayor a menor; a - b sería de menor a mayor.)
     const lista = [...jugadores].sort((a, b) => b.points - a.points || b.wins - a.wins);
     const yo = this.playerId;
+    // HTML de un puesto del podio. Si no hay jugador en ese puesto, se muestra "Libre".
     const puesto = (p, pos) =>
       p
         ? `<div class="pd p${pos} ${p.id === yo ? 'me' : ''}">
@@ -52,6 +60,8 @@ export class GameLeaderboard extends HTMLElement {
           </div>`
         : `<div class="pd p${pos} empty"><div class="q">?</div><small>Libre</small></div>`;
 
+    // Podio en orden visual 2.º - 1.º - 3.º (el primero queda en el centro).
+    // Del 4.º puesto en adelante (lista.slice(3)) se muestran en una tabla.
     this.innerHTML = /* html */ `
       <div class="stepbar"><div><div class="eyebrow">CLASIFICACIÓN</div><h2>Leaderboard</h2></div></div>
       <div class="podium">${puesto(lista[1], 2)}${puesto(lista[0], 1)}${puesto(lista[2], 3)}</div>

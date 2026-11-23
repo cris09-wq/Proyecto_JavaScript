@@ -1,3 +1,6 @@
+// =============================================================================
+// deckSelector.js — Elegir y ordenar las cartas del mazo <deck-selector>
+// =============================================================================
 import './deckStyles.css';
 import { getCards } from '../../api/cardsApi.js';
 import { validateDeck, hasEnoughActiveCards } from '../../utils/validators.js';
@@ -6,6 +9,7 @@ import { typeColor } from '../../utils/cardTypes.js';
 import { esc, emit } from '../../utils/dom.js';
 import { cardHTML, bindCardImageFallback } from '../cards/cardView.js';
 
+// Botones de filtro por tipo de carta. 'todo' muestra todas.
 const FILTROS = [
   { id: 'todo', label: 'Todo', emoji: '🃏' },
   { id: 'Caldo', label: 'Caldos', emoji: '🥣' },
@@ -26,12 +30,14 @@ export class DeckSelector extends HTMLElement {
     this.flipped = {}; // cartas que muestran su dato curioso
     this.pickOrder = []; // ids en orden numérico
     this.filtro = 'todo';
+    // Pantalla actual: load (cargando) | error | few (pocas cartas) | pick (elegir) | order (ordenar)
     this.step = 'load';
     this.render();
     this.configurarEventos();
     bindCardImageFallback(this);
   }
 
+  // Se ejecuta al agregarse a la página: cargamos las cartas.
   connectedCallback() {
     this.cargar();
   }
@@ -41,12 +47,17 @@ export class DeckSelector extends HTMLElement {
     this.render();
     try {
       const todas = await getCards(); // GET
+      // Solo se pueden elegir las cartas activas.
       this.cards = todas.filter((c) => c.active);
+      // Ordenamos los ids por su número final (card-2 antes que card-10).
+      // .sort recibe una función que compara dos elementos: si devuelve un número
+      // negativo, `a` va primero; si es positivo, `b` va primero.
       this.pickOrder = this.cards
         .map((c) => c.id)
         .sort((a, b) => {
           const na = Number(String(a).match(/(\d+)$/)?.[1] ?? 0);
           const nb = Number(String(b).match(/(\d+)$/)?.[1] ?? 0);
+          // Si los números son iguales (resta = 0), comparamos como texto.
           return na - nb || String(a).localeCompare(String(b));
         });
       this.step = hasEnoughActiveCards(todas) ? 'pick' : 'few';
@@ -57,10 +68,12 @@ export class DeckSelector extends HTMLElement {
     this.render();
   }
 
+  // Busca una carta por su id.
   porId(id) {
     return this.cards.find((c) => c.id === id);
   }
 
+  // HTML de la fila de botones de filtro.
   filtrosHTML() {
     return `<div class="filtros" role="group" aria-label="Filtrar cartas">
       ${FILTROS.map((f) => {
@@ -70,7 +83,9 @@ export class DeckSelector extends HTMLElement {
     </div>`;
   }
 
+  // Mensaje que indica si el mazo tiene combo regional (2+ cartas de la misma región).
   comboLine(ids) {
+    // .filter(Boolean) quita los valores vacíos (undefined) por si algún id no existe.
     const cs = ids.map((id) => this.porId(id)).filter(Boolean);
     const regiones = getComboRegions(cs);
     const pct = Math.round(COMBO_BONUS * 100);
@@ -79,6 +94,7 @@ export class DeckSelector extends HTMLElement {
     return `<p class="combo-line on">🔗 Combo activo: ${detalle} (+${pct} % de daño a esas cartas)</p>`;
   }
 
+  // Dibuja la pantalla según el paso actual.
   render() {
     if (this.step === 'load') {
       this.innerHTML = `<section class="panel"><span class="spin"></span>Cargando cartas…</section>`;
@@ -93,11 +109,15 @@ export class DeckSelector extends HTMLElement {
     }
   }
 
+  // Paso 1: cuadrícula de cartas para elegir.
   renderPick() {
-    const lleno = this.selected.length === 5;
+    const lleno = this.selected.length === 5; // ¿ya eligió las 5?
+    // Cartas visibles según el filtro elegido.
     const visibles = this.pickOrder
       .map((id) => this.porId(id))
       .filter((c) => c && (this.filtro === 'todo' || c.type === this.filtro));
+    // Cada carta es un botón. Si está elegida lleva "sel" y muestra su número de
+    // selección; si ya hay 5 elegidas, las demás se ven atenuadas ("dim").
     const grid = visibles
       .map((c) => {
         const sel = this.selected.includes(c.id);
@@ -110,7 +130,9 @@ export class DeckSelector extends HTMLElement {
         })}
           <button class="info" data-info="${esc(c.id)}" aria-label="Ver dato curioso" title="Dato curioso">${this.flipped[c.id] ? '↩' : 'ℹ️'}</button></div>`;
       })
+      // Si no hay cartas (texto vacío), `||` muestra el mensaje alternativo.
       .join('') || '<p class="muted">No hay cartas de este tipo.</p>';
+    // "Chips" con los nombres de las cartas elegidas hasta ahora.
     const chips =
       this.selected.map((id) => `<span>${esc(this.porId(id).emoji || '🍽️')} ${esc(this.porId(id).name)}</span>`).join('') ||
       '<span class="muted">Aún no has elegido ninguna</span>';
@@ -130,10 +152,12 @@ export class DeckSelector extends HTMLElement {
       </div>`;
   }
 
+  // Paso 2: lista de las 5 cartas con flechas ▲▼ para cambiar el orden.
   renderOrder() {
     const items = this.order
       .map((id, i) => {
         const c = this.porId(id);
+        // La primera no puede subir (i === 0) y la última no puede bajar (i === 4).
         return `<div class="oitem" style="--c:${typeColor(c.type)}">
           <div class="pos">${i + 1}</div><div class="em">${esc(c.emoji || '🍽️')}</div>
           <div class="info"><b>${esc(c.name)}</b><small>${esc(c.type)} · 📍 ${esc(c.region)} · Especial: ${esc(c.special.name)}</small></div>
@@ -153,7 +177,9 @@ export class DeckSelector extends HTMLElement {
   }
 
   configurarEventos() {
+    // Un solo listener de clics que revisa qué se clicó, en orden.
     this.addEventListener('click', (e) => {
+      // Clic en un filtro
       const filtro = e.target.closest('[data-filter]');
       if (filtro) {
         this.filtro = filtro.dataset.filter;
@@ -162,8 +188,9 @@ export class DeckSelector extends HTMLElement {
       // Mover carta en el orden del mazo
       const mv = e.target.closest('[data-mv]');
       if (mv && !mv.disabled) {
-        const i = Number(mv.dataset.mv);
-        const j = i + Number(mv.dataset.d);
+        const i = Number(mv.dataset.mv);      // posición actual
+        const j = i + Number(mv.dataset.d);   // nueva posición (-1 sube, +1 baja)
+        // Intercambiamos las dos posiciones.
         [this.order[i], this.order[j]] = [this.order[j], this.order[i]];
         return this.render();
       }
@@ -173,24 +200,29 @@ export class DeckSelector extends HTMLElement {
         const id = info.dataset.info;
         this.flipped[id] = !this.flipped[id];
         this.render();
-        this.querySelector(`[data-id="${id}"]`)?.classList.add('flipin');
+        this.querySelector(`[data-id="${id}"]`)?.classList.add('flipin'); // animación de giro
         return;
       }
       // Seleccionar / quitar carta
       const carta = e.target.closest('button.card[data-id]');
       if (carta && this.step === 'pick') {
         const id = carta.dataset.id;
+        // indexOf da la posición en el arreglo, o -1 si no está.
         const pos = this.selected.indexOf(id);
+        // Si ya estaba elegida, la quitamos (.splice borra 1 elemento en `pos`);
+        // si no, la agregamos (solo si aún hay espacio).
         if (pos >= 0) this.selected.splice(pos, 1);
         else if (this.selected.length < 5) this.selected.push(id);
         return this.render();
       }
+      // Botones con data-act
       const act = e.target.closest('[data-act]')?.dataset.act;
       if (act === 'retry') this.cargar();
       else if (act === 'clear') {
         this.selected = [];
         this.render();
       } else if (act === 'next') {
+        // Pasamos al paso 2 solo si el mazo es válido.
         const check = validateDeck(this.selected);
         if (!check.ok) return;
         this.order = [...this.selected];
@@ -200,6 +232,7 @@ export class DeckSelector extends HTMLElement {
         this.step = 'pick';
         this.render();
       } else if (act === 'fight') {
+        // Enviamos a gameApp el mazo ordenado y todas las cartas activas (pool).
         emit(this, 'deck-ready', { deck: this.order.map((id) => this.porId(id)), pool: this.cards });
       }
     });

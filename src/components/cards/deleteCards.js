@@ -1,9 +1,13 @@
+// =============================================================================
+// deleteCards.js — Eliminar una carta (DELETE)
+// =============================================================================
 import { deleteCard } from '../../api/cardsApi.js';
 import { abrirModal } from './cardForm.js';
 import { esc } from '../../utils/dom.js';
 
 /** DELETE: pide confirmación y elimina la carta. */
 export function eliminarCarta(host, card, onDone) {
+  // Ventana de confirmación antes de borrar (borrar no se puede deshacer).
   const { box, cerrar } = abrirModal(
     host,
     `<div class="em">🗑️</div><h3>¿Eliminar carta?</h3>
@@ -12,6 +16,7 @@ export function eliminarCarta(host, card, onDone) {
      <div class="row end"><button class="btn" data-close>Cancelar</button><button class="btn danger" id="yes">Eliminar</button></div>`
   );
   box.querySelector('[data-close]').onclick = cerrar;
+  // Botón "Eliminar": borra la carta en la API.
   box.querySelector('#yes').onclick = async () => {
     const msg = box.querySelector('#formMsg');
     msg.innerHTML = '<span class="spin"></span>Eliminando…';

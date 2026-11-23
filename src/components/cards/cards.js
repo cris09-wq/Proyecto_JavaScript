@@ -1,24 +1,31 @@
+// =============================================================================
+// cards.js — Tabla de administración de cartas <cards-admin>
+// =============================================================================
 import './cardsStyles.css';
 import { getCards } from '../../api/cardsApi.js';
 import { esc, emit } from '../../utils/dom.js';
 import { typeColor } from '../../utils/cardTypes.js';
-import { crearCarta } from './createCards.js';
-import { editarCartaCompleta, editarCartaParcial } from './editCards.js';
-import { eliminarCarta } from './deleteCards.js';
+// Cada operación del CRUD vive en su propio archivo:
+import { crearCarta } from './createCards.js';                              // POST
+import { editarCartaCompleta, editarCartaParcial } from './editCards.js';  // PUT y PATCH
+import { eliminarCarta } from './deleteCards.js';                          // DELETE
 
 /** Panel de administración: lista las cartas (GET) y conecta crear, editar y eliminar. */
 export class CardsAdmin extends HTMLElement {
   constructor() {
     super();
-    this.cards = [];
+    this.cards = []; // aquí guardamos las cartas que llegan de la API
     this.render();
     this.configurarEventos();
   }
 
+  // connectedCallback es un método especial: el navegador lo llama cuando el
+  // componente se agrega a la página. Es buen momento para cargar datos.
   connectedCallback() {
     this.cargar();
   }
 
+  // Estructura: encabezado con botones, aviso (toast), advertencia, lista y modales.
   render() {
     this.innerHTML = /* html */ `
       <div class="stepbar">
@@ -34,12 +41,16 @@ export class CardsAdmin extends HTMLElement {
   }
 
   configurarEventos() {
+    // Todos los botones llevan data-action (y a veces data-id) para saber qué hacer.
     this.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
+      // dataset reúne todos los atributos data-*: data-action → action, data-id → id.
       const { action, id } = btn.dataset;
+      // Buscamos la carta del botón. String() porque el id puede ser número o texto.
       const card = this.cards.find((c) => String(c.id) === id);
       const modals = this.querySelector('#modals');
+      // Función que se pasa a crear/editar/eliminar para recargar la lista al terminar.
       const hecho = (texto) => this.recargar(texto);
 
       if (action === 'new') crearCarta(modals, hecho);
@@ -50,16 +61,19 @@ export class CardsAdmin extends HTMLElement {
     });
 
     // Interruptor "Activa": PATCH de un solo campo
+    // El evento 'change' ocurre cuando cambia el valor de un input (aquí, un checkbox).
     this.addEventListener('change', async (e) => {
       const sw = e.target.closest('[data-toggle]');
       if (!sw) return;
       const card = this.cards.find((c) => String(c.id) === sw.dataset.toggle);
       sw.disabled = true;
       try {
+        // sw.checked es true si el interruptor quedó encendido.
         await editarCartaParcial(card, { active: sw.checked });
         this.recargar(`✅ PATCH /cards/${card.id} → { active: ${sw.checked} } (solo ese campo).`);
       } catch (error) {
         console.error(error);
+        // Si falló, devolvemos el interruptor a como estaba.
         sw.checked = !sw.checked;
         sw.disabled = false;
         this.aviso('❌ No se pudo cambiar el estado.', true);
@@ -67,6 +81,7 @@ export class CardsAdmin extends HTMLElement {
     });
   }
 
+  // Muestra un mensaje (toast) arriba de la tabla. Si error es true, se ve en rojo.
   aviso(texto, error = false) {
     const toast = this.querySelector('#toast');
     toast.hidden = false;
@@ -74,11 +89,13 @@ export class CardsAdmin extends HTMLElement {
     toast.textContent = texto;
   }
 
+  // Vuelve a cargar la lista y luego muestra un mensaje (si se envió uno).
   async recargar(texto) {
     await this.cargar();
     if (texto) this.aviso(texto);
   }
 
+  // Pide las cartas a la API y dibuja la tabla.
   async cargar() {
     const list = this.querySelector('#list');
     try {
@@ -88,10 +105,15 @@ export class CardsAdmin extends HTMLElement {
       list.innerHTML = `<section class="panel"><p class="msg err">No se pudieron cargar las cartas. ¿Está encendido el servidor?</p><button class="btn" data-action="retry">Reintentar</button></section>`;
       return;
     }
+    // Contamos cuántas cartas están activas.
     const activas = this.cards.filter((c) => c.active).length;
     this.querySelector('#count').textContent = `${this.cards.length} cartas · ${activas} activas`;
+    // Advertencia si hay menos de 10 activas (no se podría jugar).
     this.querySelector('#warn').innerHTML =
       activas < 10 ? `<p class="toast err">⚠️ Hay ${activas} cartas activas. Se necesitan al menos 10 para poder jugar.</p>` : '';
+    // Tabla: una fila <tr> por carta, creada con .map y unida con .join('').
+    // Las cartas inactivas llevan la clase "off" (se ven atenuadas).
+    // esc() protege los textos que vienen de la API.
     list.innerHTML = /* html */ `
       <div class="tablewrap"><table class="adm-table">
         <thead><tr><th>#</th><th>Carta</th><th>Tipo</th><th>Región</th><th>HP</th><th>Especial</th><th>Activa</th><th></th></tr></thead>

@@ -1,3 +1,6 @@
+// =============================================================================
+// editCards.js — Editar cartas (PUT = completa, PATCH = parcial)
+// =============================================================================
 import { putCard, patchCard } from '../../api/cardsApi.js';
 import { abrirModal, cardFormHTML, readCardForm } from './cardForm.js';
 
@@ -8,6 +11,8 @@ export async function editarCartaParcial(card, data) {
 
 /** Editar una carta completa: un solo botón "Guardar" (PUT). */
 export function editarCartaCompleta(host, card, onDone) {
+  // Abrimos el formulario ya lleno con los datos actuales de la carta.
+  // .replace(/</g, '&lt;') escapa el símbolo "<" del nombre para no romper el HTML.
   const { box, cerrar } = abrirModal(
     host,
     `<button type="button" class="modal-close" data-close aria-label="Cerrar">✕</button>
@@ -23,6 +28,7 @@ export function editarCartaCompleta(host, card, onDone) {
   form.onsubmit = async (e) => {
     e.preventDefault();
     const msg = box.querySelector('#formMsg');
+    // Pasamos `card` como base para conservar los campos que el formulario no edita.
     const result = readCardForm(form, card);
     if (!result.ok) {
       msg.className = 'msg err';
@@ -32,6 +38,7 @@ export function editarCartaCompleta(host, card, onDone) {
     msg.className = 'msg';
     msg.innerHTML = '<span class="spin"></span>Guardando…';
     try {
+      // PUT reemplaza la carta completa en la API.
       const nueva = await putCard(result.card, card.id);
       cerrar();
       onDone(`✅ PUT /cards/${card.id} → reemplazada completa (${Object.keys(nueva).length} campos enviados).`);

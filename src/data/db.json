@@ -15,7 +15,7 @@
       "gamesPlayed": 0,
       "createdAt": "2026-11-19T22:13:57.607Z",
       "id": 2,
-      "avatar": "andina"
+      "avatar": "orinoquia"
     },
     {
       "nickname": "NIKOL",
@@ -66,6 +66,16 @@
       "gamesPlayed": 1,
       "createdAt": "2026-11-22T00:59:04.428Z",
       "id": 7
+    },
+    {
+      "nickname": "MARTHA",
+      "avatar": "andina",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-23T17:49:01.710Z",
+      "id": 8
     }
   ],
   "cards": [
