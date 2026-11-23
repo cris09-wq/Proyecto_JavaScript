@@ -2,9 +2,9 @@
 
 Proyecto integrador de JavaScript (Campusland).
 
-- **Integrantes:** _(escribe aquí los nombres de la pareja)_
+- **Integrantes:** Cristian Leonardo Romero Chaparro - Diana Milena Chaparro Macias
 - **Temática:** comida típica colombiana
-- **Enlace publicado:** _(pega aquí el enlace de GitHub Pages)_
+- **Enlace publicado:** 
 
 ## Descripción
 
@@ -51,8 +51,6 @@ GitHub Pages no puede llamar a `localhost`, por eso en producción se usa una AP
 ```bash
 npm run seed:prod
 ```
-
-> Nota: el plan gratuito de MockAPI puede limitar la cantidad de recursos. Si no te deja crear los 4, usa JSON Server desplegado en Railway como alternativa (el código no cambia, solo la URL).
 
 ## Credenciales de administrador (evaluación)
 
