@@ -66,6 +66,26 @@
       "gamesPlayed": 1,
       "createdAt": "2026-11-22T00:59:04.428Z",
       "id": 7
+    },
+    {
+      "nickname": "HHH",
+      "avatar": "andina",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-23T18:30:47.571Z",
+      "id": 8
+    },
+    {
+      "nickname": "CAMPOS",
+      "avatar": "caribe",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-23T18:33:01.722Z",
+      "id": 9
     }
   ],
   "cards": [
