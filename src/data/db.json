@@ -96,6 +96,26 @@
       "gamesPlayed": 0,
       "createdAt": "2026-11-23T19:10:43.415Z",
       "id": 10
+    },
+    {
+      "nickname": "PIPE",
+      "avatar": "andina",
+      "points": 50,
+      "wins": 1,
+      "losses": 0,
+      "gamesPlayed": 1,
+      "createdAt": "2026-11-23T20:34:31.575Z",
+      "id": 11
+    },
+    {
+      "nickname": "LESS",
+      "avatar": "orinoquia",
+      "points": 50,
+      "wins": 1,
+      "losses": 0,
+      "gamesPlayed": 1,
+      "createdAt": "2026-11-23T21:07:25.691Z",
+      "id": 12
     }
   ],
   "cards": [
@@ -1212,6 +1232,52 @@
       "startedAt": "2026-11-22T00:59:15.515Z",
       "endedAt": "2026-11-22T01:02:26.592Z",
       "id": 4
+    },
+    {
+      "playerId": 11,
+      "playerNickname": "PIPE",
+      "result": "win",
+      "pointsAwarded": 50,
+      "playerDeck": [
+        "card-005",
+        "card-003",
+        "card-006",
+        "card-008",
+        "card-007"
+      ],
+      "machineDeck": [
+        "card-020",
+        "card-011",
+        "card-018",
+        "card-012",
+        "card-015"
+      ],
+      "startedAt": "2026-11-23T20:37:08.834Z",
+      "endedAt": "2026-11-23T20:41:19.507Z",
+      "id": 5
+    },
+    {
+      "playerId": 12,
+      "playerNickname": "LESS",
+      "result": "win",
+      "pointsAwarded": 50,
+      "playerDeck": [
+        "card-007",
+        "card-009",
+        "card-001",
+        "card-020",
+        "card-008"
+      ],
+      "machineDeck": [
+        "card-015",
+        "card-019",
+        "card-010",
+        "card-005",
+        "card-018"
+      ],
+      "startedAt": "2026-11-23T21:07:59.566Z",
+      "endedAt": "2026-11-23T21:10:18.316Z",
+      "id": 6
     }
   ]
 }

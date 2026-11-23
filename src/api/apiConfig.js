@@ -1,7 +1,3 @@
-// Selección del entorno con switch (requisito 16 del enunciado).
-// VITE_API_MODE=development -> JSON Server local
-// VITE_API_MODE=production  -> API pública (MockAPI, Supabase REST, Railway...)
-
 const env = import.meta.env ?? {};
 
 let API_URL;
@@ -23,32 +19,46 @@ if (!API_URL) {
   );
 }
 
-// Sin "/" final para poder concatenar rutas como `${API_URL}/cards`
 export const BASE_URL = API_URL.replace(/\/+$/, '');
 export const API_MODE = env.VITE_API_MODE ?? 'development';
+export const IS_SUPABASE = API_MODE === 'production' && BASE_URL.includes('supabase.co');
 
-/**
- * Único punto donde se llama a fetch().
- * Los archivos *Api.js la usan; los componentes NO llaman a fetch directamente.
- */
+const ANON_KEY = env.VITE_SUPABASE_PUBLISHABLE_KEY ?? env.VITE_SUPABASE_ANON_KEY ?? '';
+
+if (IS_SUPABASE && !ANON_KEY) {
+  throw new Error(
+    'Falta VITE_SUPABASE_PUBLISHABLE_KEY (o VITE_SUPABASE_ANON_KEY) en el entorno de Vercel'
+  );
+}
+
 export async function request(path, options = {}) {
-  const response = await fetch(`${BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  });
+  const { headers: extraHeaders = {}, ...rest } = options;
+  const method = (rest.method ?? 'GET').toUpperCase();
+  const headers = { 'Content-Type': 'application/json', ...extraHeaders };
 
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status} en ${options.method ?? 'GET'} ${path}`);
+  if (IS_SUPABASE) {
+    headers.apikey = ANON_KEY;
+    headers.Authorization = `Bearer ${ANON_KEY}`;
+    headers.Prefer = 'return=representation';
   }
 
-  // DELETE puede responder sin cuerpo (204)
+  const response = await fetch(`${BASE_URL}${path}`, { ...rest, method, headers });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} en ${method} ${path}`);
+  }
+
   if (response.status === 204) return null;
 
   const text = await response.text();
-  return text ? JSON.parse(text) : null;
+  const data = text ? JSON.parse(text) : null;
+
+  if (!IS_SUPABASE || !Array.isArray(data) || data.length !== 1) return data;
+
+  const singlePath = /^\/[^/]+\/[^/?]+(?:\?.*)?$/.test(path);
+  return singlePath || method === 'POST' || method === 'PATCH' ? data[0] : data;
 }
 
-/** Quita el id para que lo asigne el servidor (necesario en MockAPI y evita choques en JSON Server). */
 export function withoutId(data) {
   const { id, ...rest } = data;
   return rest;
