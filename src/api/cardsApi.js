@@ -1,4 +1,4 @@
-import { request, withoutId } from './apiConfig.js';
+import { byId, request, withoutId } from './apiConfig.js';
 
 // GET: consultar y listar
 export async function getCards() {
@@ -6,7 +6,7 @@ export async function getCards() {
 }
 
 export async function getCardById(id) {
-  return request(`/cards/${id}`);
+  return request(byId('cards', id));
 }
 
 // POST: crear (el servidor asigna el id)
@@ -22,7 +22,7 @@ export async function postCard(card) {
 
 // PUT: REEMPLAZA la carta completa. Los campos que no envíes se pierden.
 export async function putCard(card, id) {
-  return request(`/cards/${id}`, {
+  return request(byId('cards', id), {
     method: 'PUT',
     body: JSON.stringify(withoutId(card)),
   });
@@ -30,7 +30,7 @@ export async function putCard(card, id) {
 
 // PATCH: actualiza SOLO los campos enviados (ej. { active: false }).
 export async function patchCard(data, id) {
-  return request(`/cards/${id}`, {
+  return request(byId('cards', id), {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
@@ -38,5 +38,5 @@ export async function patchCard(data, id) {
 
 // DELETE: eliminar
 export async function deleteCard(id) {
-  return request(`/cards/${id}`, { method: 'DELETE' });
+  return request(byId('cards', id), { method: 'DELETE' });
 }

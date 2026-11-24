@@ -56,7 +56,15 @@ export async function request(path, options = {}) {
   if (!IS_SUPABASE || !Array.isArray(data) || data.length !== 1) return data;
 
   const singlePath = /^\/[^/]+\/[^/?]+(?:\?.*)?$/.test(path);
-  return singlePath || method === 'POST' || method === 'PATCH' ? data[0] : data;
+  const singleFilter = /^\/[^/]+\?id=eq\.[^&]+$/.test(path);
+  return singlePath || singleFilter || method === 'POST' || method === 'PATCH' ? data[0] : data;
+}
+
+export function byId(resource, id) {
+  const table = resource.replace(/^\/+/, '');
+  return IS_SUPABASE
+    ? `/${table}?id=eq.${encodeURIComponent(id)}`
+    : `/${table}/${encodeURIComponent(id)}`;
 }
 
 export function withoutId(data) {

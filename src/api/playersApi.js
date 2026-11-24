@@ -1,4 +1,4 @@
-import { request } from './apiConfig.js';
+import { byId, request } from './apiConfig.js';
 
 export async function getPlayers() {
   return request('/players');
@@ -17,7 +17,7 @@ export async function findPlayerByNickname(nickname) {
 
 /** Consulta un jugador por id (404 si no existe). */
 export async function getPlayerById(id) {
-  return request(`/players/${id}`);
+  return request(byId('players', id));
 }
 
 export async function postPlayer(nickname, avatar) {
@@ -36,14 +36,14 @@ export async function postPlayer(nickname, avatar) {
 }
 
 export async function patchPlayer(data, id) {
-  return request(`/players/${id}`, {
+  return request(byId('players', id), {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export async function deletePlayer(id) {
-  return request(`/players/${id}`, { method: 'DELETE' });
+  return request(byId('players', id), { method: 'DELETE' });
 }
 
 /**
@@ -51,7 +51,7 @@ export async function deletePlayer(id) {
  * Lee el estado actual del servidor para no pisar datos de otra pestaña.
  */
 export async function addBattleResult(playerId, didWin) {
-  const current = await request(`/players/${playerId}`);
+  const current = await getPlayerById(playerId);
   return patchPlayer(
     {
       points: current.points + (didWin ? 50 : 10),

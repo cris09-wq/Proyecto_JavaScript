@@ -1,4 +1,4 @@
-import { request, withoutId } from './apiConfig.js';
+import { byId, request, withoutId } from './apiConfig.js';
 
 /**
  * Login académico: consulta /admins y compara las credenciales.
@@ -17,7 +17,7 @@ export async function postAdmin(admin) {
 }
 
 export async function deleteAdmin(id) {
-  return request(`/admins/${id}`, { method: 'DELETE' });
+  return request(byId('admins', id), { method: 'DELETE' });
 }
 
 export async function loginAdmin(username, password) {

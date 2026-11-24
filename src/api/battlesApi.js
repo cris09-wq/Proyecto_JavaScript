@@ -12,7 +12,7 @@ export async function postBattle({ player, didWin, playerDeck, machineDeck, star
   return request('/battles', {
     method: 'POST',
     body: JSON.stringify({
-      playerId: player.id,
+      playerId: Number(player.id),
       playerNickname: player.nickname,
       result: didWin ? 'win' : 'loss',
       pointsAwarded: didWin ? 50 : 10,
