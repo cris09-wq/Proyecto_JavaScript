@@ -1,4 +1,4 @@
-import { request } from './apiConfig.js';
+import { nextId, request } from './apiConfig.js';
 
 export async function getBattles() {
   return request('/battles');
@@ -12,6 +12,7 @@ export async function postBattle({ player, didWin, playerDeck, machineDeck, star
   return request('/battles', {
     method: 'POST',
     body: JSON.stringify({
+      id: await nextId('battles'),
       playerId: Number(player.id),
       playerNickname: player.nickname,
       result: didWin ? 'win' : 'loss',

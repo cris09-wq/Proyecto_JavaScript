@@ -67,6 +67,14 @@ export function byId(resource, id) {
     : `/${table}/${encodeURIComponent(id)}`;
 }
 
+export async function nextId(resource) {
+  const query = IS_SUPABASE
+    ? '?select=id&order=id.desc&limit=1'
+    : '?_sort=id&_order=desc&_limit=1';
+  const rows = await request(`/${resource}${query}`);
+  return Number(rows?.[0]?.id ?? 0) + 1;
+}
+
 export function withoutId(data) {
   const { id, ...rest } = data;
   return rest;

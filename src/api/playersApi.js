@@ -1,4 +1,4 @@
-import { byId, request } from './apiConfig.js';
+import { byId, nextId, request } from './apiConfig.js';
 
 export async function getPlayers() {
   return request('/players');
@@ -24,6 +24,7 @@ export async function postPlayer(nickname, avatar) {
   return request('/players', {
     method: 'POST',
     body: JSON.stringify({
+      id: await nextId('players'),
       nickname: nickname.trim(),
       avatar,
       points: 0,
