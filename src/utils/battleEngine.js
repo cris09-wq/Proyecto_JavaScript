@@ -51,6 +51,7 @@ export function createCardState(card) {
     cooldown: 0, // turnos propios que faltan para volver a usar el especial
     turnsTaken: 0, // turnos propios ya jugados por ESTA carta
     hasCombo: false, // true si su región forma combo en el mazo
+    lastAction: null, // última acción elegida en modo automático (para no defender 2 veces seguidas)
   };
 }
 
@@ -116,6 +117,36 @@ export function chooseMachineAction(cs, rng = Math.random) {
     rng
   );
 }
+
+/**
+ * Estrategia del jugador en MODO AUTOMÁTICO.
+ * 1. Parte de las acciones válidas (getAvailableActions nunca incluye el especial bloqueado).
+ * 2. Si la última acción fue defender, quita la defensa (no defender 2 veces seguidas).
+ * 3. Elige con pesos:
+ *    - especial: 6 (prioridad cuando está disponible)
+ *    - defender: 4 si la vida es menor al 35 %, 1 si no
+ *    - atacar:   2
+ */
+export function chooseAutoAction(cs, rng = Math.random) {
+  const lowLife = cs.hp < cs.card.hp * 0.35;
+
+  let actions = getAvailableActions(cs);
+  if (cs.lastAction === 'defend') {
+    actions = actions.filter((a) => a.type !== 'defend');
+  }
+
+  const chosen = pickWeighted(
+    actions.map((action) => ({
+      item: action,
+      weight: action.type === 'special' ? 6 : action.type === 'defend' ? (lowLife ? 4 : 1) : 2,
+    })),
+    rng
+  );
+
+  cs.lastAction = chosen.type;
+  return chosen;
+}
+
 
 /**
  * Resuelve una acción. Modifica los estados recibidos y devuelve un resumen
