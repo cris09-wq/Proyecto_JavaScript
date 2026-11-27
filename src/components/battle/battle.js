@@ -16,10 +16,12 @@ import { shuffle, playerStarts } from '../../utils/random.js';
 import { esc, sleep, emit } from '../../utils/dom.js';
 import { AVATAR_IDS, getAvatar, faceImg, bodyImg } from '../../assets/avatars.js';
 import { playSound, GAME_SOUNDS } from '../../utils/audio.js';
-import { createDeckStates, startOwnTurn, chooseMachineAction, resolveAction } from '../../utils/battleEngine.js';
+import { createDeckStates, startOwnTurn, chooseMachineAction, chooseAutoAction, resolveAction } from '../../utils/battleEngine.js';
 
 // Puntos que se ganan al terminar una partida.
 const POINTS = { win: 50, loss: 10 };
+// Pausa (ms) antes de cada acción automática, para que se vea lo que ocurre.
+const AUTO_DELAY = 1100;
 
 /**
  * Orquestador del combate: sorteo, turnos, animaciones, sonidos y guardado del resultado.
@@ -31,6 +33,7 @@ export class BattleArena extends HTMLElement {
     this.B = null; // estado de la partida
     this.player = null;
     this.dead = false; // true si el componente se retira del DOM a mitad de combate
+    this.autoTimer = null; // id del ÚNICO setTimeout pendiente de una acción automática
     this.render();
     this.configurarEventos();
   }
@@ -40,6 +43,7 @@ export class BattleArena extends HTMLElement {
   // cambiar de vista). Marcamos `dead` para detener las esperas pendientes.
   disconnectedCallback() {
     this.dead = true;
+    this.detenerTemporizador();
   }
 
   // Estructura de la pantalla: barra de turno, tablero con las dos cartas,
@@ -71,7 +75,7 @@ export class BattleArena extends HTMLElement {
     this.addEventListener('battle-action', (e) => {
       const B = this.B;
       // Ignoramos la acción si: no hay partida, está bloqueada, terminó o no es el turno del jugador.
-      if (!B || B.lock || B.over || B.turn !== 'p') return;
+      if (!B || B.lock || B.acting || B.over || B.turn !== 'p' || B.mode === 'automatic') return;
       this.perform('p', e.detail.action);
     });
     // Botones de abandonar / jugar otra vez / ver ranking.
@@ -79,9 +83,11 @@ export class BattleArena extends HTMLElement {
       // `?.id` → si no se clicó un botón, `id` queda undefined en vez de dar error.
       const id = e.target.closest('button')?.id;
       if (id === 'quit') this.preguntarAbandono(true);
+      else if (id === 'modeToggle') this.cambiarModo();
       else if (id === 'quitNo') this.preguntarAbandono(false);
       else if (id === 'quitYes') {
         this.dead = true;
+        this.detenerTemporizador();
         emit(this, 'battle-abandoned');
       } else if (id === 'playAgain') emit(this, 'play-again');
       else if (id === 'toRank') emit(this, 'go-ranking');
@@ -113,6 +119,8 @@ export class BattleArena extends HTMLElement {
       over: false,    // true cuando termina la partida
       ask: false,     // true si se está preguntando "¿Abandonar?"
       startedAt: new Date().toISOString(),
+      mode: 'manual', // 'manual' | 'automatic'
+      acting: false,  // true mientras perform() está ejecutando una acción (evita acciones simultáneas)
     });
     this.log(`Sorteo: inicia ${iniciaJugador ? player.nickname : 'la máquina'}.`);
     // Contamos cuántas cartas tienen combo en cada mazo.
@@ -145,23 +153,61 @@ export class BattleArena extends HTMLElement {
     this.B.log.push(texto);
     if (this.B.log.length > 40) this.B.log.shift();
   }
+  // ---------- Modo automático ----------
+  /** Cancela la acción automática pendiente (si hay). */
+  detenerTemporizador() {
+    clearTimeout(this.autoTimer);
+    this.autoTimer = null;
+  }
+
+  /**
+   * Programa UNA acción automática para `side` dentro de AUTO_DELAY ms.
+   * Antes de crear un timer cancela el anterior → nunca hay dos pendientes.
+   */
+  programarTurnoAutomatico(side) {
+    const B = this.B;
+    this.detenerTemporizador();
+    this.autoTimer = setTimeout(() => {
+      this.autoTimer = null;
+      // Validamos que todo siga igual que cuando se programó
+      if (this.dead || this.B !== B || B.over || B.acting || B.turn !== side) return;
+      if (side === 'p' && B.mode !== 'automatic') return; // el jugador volvió a manual
+      const cs = this.cur(side);
+      const action = side === 'm' ? chooseMachineAction(cs) : chooseAutoAction(cs);
+      this.perform(side, action);
+    }, AUTO_DELAY);
+  }
+
+  /** Botón del modo: alterna entre manual y automático. */
+  cambiarModo() {
+    const B = this.B;
+    if (!B || B.over) return;
+    B.mode = B.mode === 'automatic' ? 'manual' : 'automatic';
+    this.log(B.mode === 'automatic' ? '🤖 Modo AUTOMÁTICO activado.' : '🎮 Modo MANUAL activado.');
+    // Solo actuamos de inmediato si es el turno del jugador y no hay nada en curso.
+    // Si está en el sorteo o animando, el siguiente beginTurn() leerá el nuevo modo.
+    if (B.turn === 'p' && !B.intro && !B.acting) {
+      if (B.mode === 'automatic') {
+        B.lock = true;
+        this.programarTurnoAutomatico('p');
+      } else {
+        this.detenerTemporizador();
+        B.lock = false;
+      }
+    }
+    this.refresh();
+  }
 
   // ---------- Turnos ----------
   beginTurn() {
     const B = this.B;
     if (this.dead || B.over) return;
     startOwnTurn(this.cur(B.turn)); // el cooldown baja 1 al iniciar cada turno propio
-    // Si es el turno de la máquina bloqueamos los botones del jugador.
-    B.lock = B.turn === 'm';
+    // Turno automático: siempre el de la máquina, y el del jugador si está en modo automático.
+    const automatico = B.turn === 'm' || B.mode === 'automatic';
+    B.lock = automatico; // bloquea los botones si nadie debe hacer clic
     this.refresh();
-    if (B.turn === 'm') {
-      // La máquina "piensa" 1.1 s y luego elige su acción.
-      (async () => {
-        await sleep(1100);
-        if (this.dead || this.B !== B) return;
-        this.perform('m', chooseMachineAction(this.cur('m')));
-      })();
-    }
+    if (automatico) this.programarTurnoAutomatico(B.turn);
   }
 
   /**
@@ -182,6 +228,7 @@ export class BattleArena extends HTMLElement {
     const fMe = this.querySelector(`#f-${side}`);
     const fFoe = this.querySelector(`#f-${foeSide}`);
     B.lock = true;
+    B.acting = true;
 
     if (action.type === 'defend') {
       // --- DEFENSA ---
@@ -251,12 +298,14 @@ export class BattleArena extends HTMLElement {
     // Cambiamos el turno al otro lado y empezamos su turno.
     B.turnCount++;
     B.turn = foeSide;
+    B.acting = false;
     this.beginTurn();
   }
 
   // ---------- Final y guardado ----------
   async finish(winnerSide) {
     const B = this.B;
+    this.detenerTemporizador();
     const gano = winnerSide === 'p';
     B.over = true;
     B.lock = true;
@@ -312,11 +361,13 @@ export class BattleArena extends HTMLElement {
   refresh() {
     const B = this.B;
     if (!B) return;
+    const auto = B.mode === 'automatic';
+    this.classList.toggle('modo-auto', auto);
     // Una ronda = 2 turnos (uno de cada lado).
     const round = Math.floor(B.turnCount / 2) + 1;
-    const texto = B.intro ? 'Sorteando quién inicia…' : B.over ? 'Combate terminado' : B.turn === 'p' ? '🟢 Tu turno' : '🔴 Turno de la máquina…';
+    const texto = B.intro ? 'Sorteando quién inicia…' : B.over ? 'Combate terminado' : B.turn === 'p' ? (auto ? '🤖 Tu carta juega sola (AUTOMÁTICO)' : '🟢 Tu turno') : '🔴 Turno de la máquina…';
     const bar = this.querySelector('#turnbar');
-    bar.className = `turnbar ${B.over || B.intro ? '' : B.turn}`;
+    bar.className = `turnbar ${B.over || B.intro ? '' : B.turn} ${auto ? 'auto' : ''}`;
     // Avatar de quien tiene el turno: jugador a la izquierda, máquina a la derecha
     const activo = B.over || B.intro ? null : B.turn;
     // La estructura de la barra se crea solo la primera vez.
@@ -346,7 +397,7 @@ export class BattleArena extends HTMLElement {
     this.querySelector('#f-m').update({ cs: this.cur('m'), deck: B.m.deck, idx: B.m.idx, who: '🤖 Máquina' });
     if (cambio && activo) this.querySelector(activo === 'p' ? '#f-p' : '#f-m').anunciar(3000);
     // Los botones solo se habilitan si es el turno del jugador y nada lo bloquea.
-    this.querySelector('#controls').update({ cs: this.cur('p'), enabled: B.turn === 'p' && !B.lock && !B.over && !B.intro });
+    this.querySelector('#controls').update({ cs: this.cur('p'), enabled: B.turn === 'p' && !B.lock && !B.over && !B.intro && !auto });
 
     // Historial completo con la jugada más reciente arriba
     // [...B.log] copia el arreglo para que .reverse() no altere el original.
@@ -354,11 +405,12 @@ export class BattleArena extends HTMLElement {
     log.innerHTML = [...B.log].reverse().map((l) => `<div>${esc(l)}</div>`).join('');
     log.scrollTop = 0;
     // Zona de abandonar: nada si terminó, la pregunta si se pidió, o el botón.
+    const modoBtn = `<button class="btn ${auto ? 'primary' : ''}" id="modeToggle">${auto ? '🤖 AUTOMÁTICO · pasar a manual' : '🎮 MANUAL · pasar a automático'}</button>`;
     this.querySelector('#quitRow').innerHTML = B.over
       ? ''
       : B.ask
-        ? `<span class="muted">¿Abandonar? No suma puntos.</span><button class="btn" id="quitYes">Sí, abandonar</button><button class="btn" id="quitNo">Seguir</button>`
-        : `<button class="btn" id="quit">Abandonar</button>`;
+        ? `${modoBtn}<span class="muted">¿Abandonar? No suma puntos.</span><button class="btn" id="quitYes">Sí, abandonar</button><button class="btn" id="quitNo">Seguir</button>`
+        : `${modoBtn}<button class="btn" id="quit">Abandonar</button>`;
     this.querySelector('#overlay').innerHTML = this.overlayHTML();
   }
 

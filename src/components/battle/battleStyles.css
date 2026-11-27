@@ -1146,3 +1146,16 @@ battle-card {
   justify-content: flex-end;
   margin-top: 12px
 }
+
+/* ===== Examen: modo automático ===== */
+.turnbar.auto .tb-text {
+  outline: 2px dashed #fcd116;
+  outline-offset: 4px;
+  border-radius: 8px
+}
+
+battle-arena.modo-auto battle-controls {
+  opacity: .5;
+  pointer-events: none;
+  filter: grayscale(.6)
+}
