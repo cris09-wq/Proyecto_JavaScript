@@ -204,10 +204,26 @@ export class BattleArena extends HTMLElement {
 
       // ...luego se calcula el daño y se anima el golpe en el rival.
       const r = resolveAction(me, foe, action);
-      this.log(`${esEspecial ? '⚡' : '⚔️'} ${quien}: ${c.name} usa ${r.name} → ${r.damage} de daño${r.blocked ? ' (bloqueado 50 %)' : ''}.`);
+
+      // Historial: mensaje distinto si esquivó o si fue crítico
+      if (r.dodged) {
+        this.log(`💨 ${quien}: ${c.name} usa ${r.name} → ¡ATAQUE ESQUIVADO! ${foe.card.name} no recibe daño.`);
+      } else {
+        this.log(`${esEspecial ? '⚡' : '⚔️'} ${quien}: ${c.name} usa ${r.name} → ${r.damage} de daño${r.blocked ? ' (bloqueado 50 %)' : ''}${r.critical ? ' 💥 ¡GOLPE CRÍTICO!' : ''}.`);
+      }
       this.refresh();
-      fFoe.animar('anim-hit', 500);
-      fFoe.mostrarDanio(`-${r.damage}`, `${esEspecial ? 'sp ' : ''}${r.blocked ? 'blk' : ''}`);
+
+      // Animación y número flotante sobre la carta rival
+      if (r.dodged) {
+        fFoe.animar('anim-dodge', 600);
+        fFoe.mostrarDanio('¡ESQUIVADO!', 'miss');
+      } else {
+        fFoe.animar('anim-hit', 500);
+        fFoe.mostrarDanio(
+          r.critical ? `-${r.damage} ¡CRÍTICO!` : `-${r.damage}`,
+          `${esEspecial ? 'sp ' : ''}${r.blocked ? 'blk ' : ''}${r.critical ? 'crit' : ''}`
+        );
+      }
       await sleep(900);
       if (!vivo()) return;
 
