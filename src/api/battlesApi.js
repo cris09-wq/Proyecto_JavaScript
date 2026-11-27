@@ -15,7 +15,7 @@ export async function getBattles() {
  * Fíjate que los parámetros están entre llaves { }: es desestructuración.
  * La función recibe UN objeto y saca directamente sus propiedades como variables.
  */
-export async function postBattle({ player, didWin, playerDeck, machineDeck, startedAt }) {
+export async function postBattle({ player, didWin, playerDeck, machineDeck, startedAt, mode= "manual" }) {
   return request('/battles', {
     method: 'POST',
     body: JSON.stringify({
@@ -28,6 +28,7 @@ export async function postBattle({ player, didWin, playerDeck, machineDeck, star
       playerDeck,  // forma corta de escribir playerDeck: playerDeck
       machineDeck,
       startedAt,
+      mode,
       // Fecha y hora actual en formato estándar ISO (ej. "2026-11-22T15:30:00.000Z").
       endedAt: new Date().toISOString(),
     }),

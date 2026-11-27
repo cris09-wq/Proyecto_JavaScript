@@ -323,6 +323,7 @@ export class BattleArena extends HTMLElement {
         playerDeck: B.p.deck.map((d) => d.card.id),
         machineDeck: B.m.deck.map((d) => d.card.id),
         startedAt: B.startedAt,
+        mode: B.mode,
       });
       this.player = player;
       B.saveErr = false;
