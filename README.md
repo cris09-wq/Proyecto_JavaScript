@@ -1,10 +1,10 @@
-<<<<<<< HEAD
+
 =======
 # 🍲 Card Battle Arena — Sabores de Colombia
 
-Proyecto integrador de JavaScript (Campusland).
+Parcial.
 
-- **Integrantes:** Cristian Leonardo Romero Chaparro - Diana Milena Chaparro Macias
+- **Integrantes:** Diana Milena Chaparro Macias
 - **Temática:** comida típica colombiana
 - **Enlace publicado:** 
 
