@@ -68,14 +68,43 @@
       "id": 7
     },
     {
+<<<<<<< HEAD
       "nickname": "MARTHA",
+=======
+      "nickname": "HHH",
+>>>>>>> main
       "avatar": "andina",
       "points": 0,
       "wins": 0,
       "losses": 0,
       "gamesPlayed": 0,
+<<<<<<< HEAD
       "createdAt": "2026-11-23T17:49:01.710Z",
       "id": 8
+=======
+      "createdAt": "2026-11-23T18:30:47.571Z",
+      "id": 8
+    },
+    {
+      "nickname": "CAMPOS",
+      "avatar": "caribe",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-23T18:33:01.722Z",
+      "id": 9
+    },
+    {
+      "nickname": "KATHE",
+      "avatar": "caribe",
+      "points": 0,
+      "wins": 0,
+      "losses": 0,
+      "gamesPlayed": 0,
+      "createdAt": "2026-11-23T19:10:43.415Z",
+      "id": 10
+>>>>>>> main
     }
   ],
   "cards": [

@@ -167,7 +167,7 @@ export class GameApp extends HTMLElement {
     // classList.toggle(clase, condición): agrega la clase si la condición es true, la quita si es false.
     sheet?.classList.toggle('glass', inicio);
     sheet?.classList.toggle('glass-dark', ranking); // vidrio oscuro para el ranking
-    this.querySelector('.stage')?.classList.toggle('centrada', view === 'register'); // inicio centrado en vertical
+    this.querySelector('.stage')?.classList.toggle('centrada', view === 'register' || view === 'admin'); // inicio y admin centrados en vertical
     sheet?.classList.toggle('wide', view === 'battle'); // la batalla usa más ancho (tablero + historial)
   }
 
