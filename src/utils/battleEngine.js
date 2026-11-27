@@ -12,6 +12,11 @@ import { randomFloat, pickWeighted } from './random.js';
 export const MAX_HP = 250;       // vida máxima por defecto de una carta
 export const COMBO_BONUS = 0.1; // +10 % de daño con combo regional
 
+//PARCIAL
+export const CRIT_CHANCE = 0.12;
+export const CRIT_MULTIPLIER = 1.5;
+export const DODGE_CHANCE = 0.08;
+
 /**
  * Regiones que aparecen 2 o más veces en un mazo de cartas.
  * Ejemplo: si hay 2 cartas de "Caribe" y 1 de "Andina" → devuelve ['Caribe'].
@@ -86,6 +91,13 @@ export function calculateDamage(baseDamage, rng = Math.random, bonus = 0) {
   return Math.round(baseDamage * randomFloat(0.85, 1.15, rng) * (1 + bonus));
 }
 
+//PARCIAL
+
+/** Daño sin redondear: base × factor aleatorio (0.85–1.15) × bonus de combo. */
+export function calculateRawDamage(baseDamage, rng = Math.random, bonus = 0) {
+  return baseDamage * randomFloat(0.85, 1.15, rng) * (1 + bonus);
+}
+
 /**
  * "IA" de la máquina: solo reglas simples sobre acciones válidas.
  * A cada acción le damos un "peso": mientras más peso, más probable es elegirla.
@@ -130,32 +142,49 @@ export function resolveAction(attacker, defender, action, rng = Math.random) {
   }
 
   // --- Caso 2: ATACAR o ESPECIAL -----------------------------------------
-  // Elegimos el movimiento: el especial o el ataque en la posición indicada.
+  // Paso 1: seleccionar ataque (o especial)
   const move = action.type === 'special' ? card.special : card.attacks[action.index];
-  // Calculamos el daño (con bonus de combo si la carta lo tiene).
-  let damage = calculateDamage(move.baseDamage, rng, attacker.hasCombo ? COMBO_BONUS : 0);
 
-  // Si el rival estaba defendiendo, reducimos el daño según su defensa.
-  // Ej. damageReduction = 0.4 → recibe solo el 60 % del daño.
+  // Paso 2: factor aleatorio de daño (+ combo regional)
+  let damage = calculateRawDamage(move.baseDamage, rng, attacker.hasCombo ? COMBO_BONUS : 0);
+
+  // Paso 3: ¿el defensor esquiva?
+  const dodged = rng() < DODGE_CHANCE;
+  let critical = false;
   let blocked = false;
-  if (defender.isDefending) {
-    damage = Math.round(damage * (1 - defender.card.defense.damageReduction));
-    defender.isDefending = false; // la defensa se gasta con el siguiente ataque recibido
-    blocked = true;
+
+  if (dodged) {
+    // Paso 4: esquivó → daño 0 y termina la resolución del daño
+    damage = 0;
+  } else {
+    // Paso 5: determinar golpe crítico
+    critical = rng() < CRIT_CHANCE;
+    // Paso 6: si es crítico, ×1.5
+    if (critical) damage *= CRIT_MULTIPLIER;
+    // Paso 7: si el defensor estaba defendiendo, reducir 50 %
+    if (defender.isDefending) {
+      damage *= 1 - defender.card.defense.damageReduction;
+      defender.isDefending = false;
+      blocked = true;
+    }
+    // Paso 8: redondear
+    damage = Math.round(damage);
+    // Paso 9: restar HP (nunca menos de 0)
+    defender.hp = Math.max(0, defender.hp - damage);
   }
 
-  // Restamos la vida. Math.max(0, ...) evita que la vida quede negativa.
-  defender.hp = Math.max(0, defender.hp - damage);
+  // Esto se ejecuta SIEMPRE, haya esquive o no:
   attacker.turnsTaken++;
-  // Si usó el especial, debe esperar unos turnos (cooldown) para repetirlo.
   if (action.type === 'special') attacker.cooldown = card.special.cooldown;
 
-  // Resumen de lo que pasó, para mostrarlo en pantalla.
   return {
     type: action.type,
     name: move.name,
     damage,
     blocked,
-    defeated: defender.hp === 0, // true si el rival quedó sin vida
+    critical,
+    dodged,
+    defeated: defender.hp === 0, // Paso 11 (el paso 10, la interfaz, lo hace battle.js)
   };
-}
+  };
+
