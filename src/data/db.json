@@ -9,10 +9,10 @@
   "players": [
     {
       "nickname": "DIANA",
-      "points": 0,
+      "points": 10,
       "wins": 0,
-      "losses": 0,
-      "gamesPlayed": 0,
+      "losses": 1,
+      "gamesPlayed": 1,
       "createdAt": "2026-11-19T22:13:57.607Z",
       "id": 2,
       "avatar": "andina"
@@ -1212,6 +1212,30 @@
       "startedAt": "2026-11-22T00:59:15.515Z",
       "endedAt": "2026-11-22T01:02:26.592Z",
       "id": 4
+    },
+    {
+      "playerId": 2,
+      "playerNickname": "DIANA",
+      "result": "loss",
+      "pointsAwarded": 10,
+      "playerDeck": [
+        "card-003",
+        "card-007",
+        "card-011",
+        "card-015",
+        "card-019"
+      ],
+      "machineDeck": [
+        "card-010",
+        "card-005",
+        "card-016",
+        "card-018",
+        "card-017"
+      ],
+      "startedAt": "2026-11-27T22:33:15.337Z",
+      "mode": "automatic",
+      "endedAt": "2026-11-27T22:37:18.566Z",
+      "id": 5
     }
   ]
 }
