@@ -83,6 +83,22 @@ export class BattleCard extends HTMLElement {
     this.appendChild(s);
     setTimeout(() => s.remove(), 1000);
   }
+
+  mostrarCritico() {
+    const aviso = document.createElement('span');
+    aviso.className = 'crit-banner';
+    aviso.textContent = '¡GOLPE CRÍTICO!';
+    this.appendChild(aviso);
+    setTimeout(() => aviso.remove(), 1200);
+  }
+
+  mostrarEsquivo() {
+    const aviso = document.createElement('span');
+    aviso.className = 'dodge-banner';
+    aviso.textContent = '¡ATAQUE ESQUIVADO!';
+    this.appendChild(aviso);
+    setTimeout(() => aviso.remove(), 1100);
+  }
 }
 
 customElements.define('battle-card', BattleCard);

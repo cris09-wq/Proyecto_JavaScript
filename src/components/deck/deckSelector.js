@@ -25,6 +25,7 @@ export class DeckSelector extends HTMLElement {
     this.order = []; // ids en el orden de combate
     this.flipped = {}; // cartas que muestran su dato curioso
     this.pickOrder = []; // ids en orden numérico
+    this.mode = 'manual';
     this.filtro = 'todo';
     this.step = 'load';
     this.render();
@@ -141,10 +142,16 @@ export class DeckSelector extends HTMLElement {
         </div>`;
       })
       .join('');
+    const modoHTML = `<div class="filtros" role="group" aria-label="Modo de batalla">
+      <button class="filtro ${this.mode === 'manual' ? 'on' : ''}" data-mode="manual">🧤 MANUAL</button>
+      <button class="filtro ${this.mode === 'auto' ? 'on' : ''}" data-mode="auto">🤖 AUTOMÁTICO</button>
+    </div>`;
+
     this.innerHTML = /* html */ `
       <div class="stepbar"><div><div class="eyebrow">PASO 2</div><h2>Ordena tu mazo</h2>
       <span class="muted">La carta 1 sale primero al combate.</span></div></div>
       ${this.comboLine(this.order)}
+      ${modoHTML}
       <div class="olist">${items}</div>
       <div class="row between">
         <button class="btn" data-act="back">← Cambiar cartas</button>
@@ -185,6 +192,11 @@ export class DeckSelector extends HTMLElement {
         else if (this.selected.length < 5) this.selected.push(id);
         return this.render();
       }
+      const modo = e.target.closest('[data-mode]');
+      if (modo) {
+        this.mode = modo.dataset.mode;
+        return this.render();
+      }
       const act = e.target.closest('[data-act]')?.dataset.act;
       if (act === 'retry') this.cargar();
       else if (act === 'clear') {
@@ -200,7 +212,11 @@ export class DeckSelector extends HTMLElement {
         this.step = 'pick';
         this.render();
       } else if (act === 'fight') {
-        emit(this, 'deck-ready', { deck: this.order.map((id) => this.porId(id)), pool: this.cards });
+        emit(this, 'deck-ready', {
+          deck: this.order.map((id) => this.porId(id)),
+          pool: this.cards,
+          mode: this.mode,
+        });
       }
     });
   }

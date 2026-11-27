@@ -7,7 +7,7 @@ import { shuffle, playerStarts } from '../../utils/random.js';
 import { esc, sleep, emit } from '../../utils/dom.js';
 import { AVATAR_IDS, getAvatar, faceImg, bodyImg } from '../../assets/avatars.js';
 import { playSound, GAME_SOUNDS } from '../../utils/audio.js';
-import { createDeckStates, startOwnTurn, chooseMachineAction, resolveAction } from '../../utils/battleEngine.js';
+import { createDeckStates, startOwnTurn, chooseMachineAction, choosePlayerAction, resolveAction } from '../../utils/battleEngine.js';
 
 const POINTS = { win: 50, loss: 10 };
 
@@ -53,7 +53,7 @@ export class BattleArena extends HTMLElement {
   configurarEventos() {
     this.addEventListener('battle-action', (e) => {
       const B = this.B;
-      if (!B || B.lock || B.over || B.turn !== 'p') return;
+      if (!B || B.lock || B.over || B.acting || B.turn !== 'p') return;
       this.perform('p', e.detail.action);
     });
     this.addEventListener('click', (e) => {
@@ -70,7 +70,7 @@ export class BattleArena extends HTMLElement {
 
   // ---------- Inicio ----------
   /** gameApp llama a start() con el mazo ordenado del jugador y todas las cartas activas. */
-  start({ player, deck, pool }) {
+  start({ player, deck, pool, mode = 'manual' }) {
     this.player = player;
     const ids = deck.map((c) => c.id);
     const rivales = shuffle(pool.filter((c) => !ids.includes(c.id))).slice(0, 5); // la máquina elige 5 distintas
@@ -88,9 +88,12 @@ export class BattleArena extends HTMLElement {
       intro: true,
       over: false,
       ask: false,
+      mode: mode === 'auto' ? 'auto' : 'manual',
+      acting: false,
       startedAt: new Date().toISOString(),
     });
     this.log(`Sorteo: inicia ${iniciaJugador ? player.nickname : 'la máquina'}.`);
+    this.log(`🎮 Modo ${B.mode === 'auto' ? 'AUTOMÁTICO' : 'MANUAL'}.`);
     const pc = B.p.deck.filter((d) => d.hasCombo).length;
     const mc = B.m.deck.filter((d) => d.hasCombo).length;
     if (pc) this.log(`🔗 Tu mazo tiene combo regional: +10 % de daño en ${pc} cartas.`);
@@ -120,25 +123,31 @@ export class BattleArena extends HTMLElement {
     const B = this.B;
     if (this.dead || B.over) return;
     startOwnTurn(this.cur(B.turn)); // el cooldown baja 1 al iniciar cada turno propio
-    B.lock = B.turn === 'm';
+    const auto = B.turn === 'm' || B.mode === 'auto';
+    B.lock = auto;
+    B.acting = false;
     this.refresh();
-    if (B.turn === 'm') {
-      (async () => {
-        await sleep(1100);
-        if (this.dead || this.B !== B) return;
-        this.perform('m', chooseMachineAction(this.cur('m')));
-      })();
-    }
+    if (!auto) return;
+
+    const lado = B.turn;
+    (async () => {
+      await sleep(1100);
+      if (this.dead || this.B !== B || B.over || B.turn !== lado || B.acting) return;
+      const action = lado === 'p' ? choosePlayerAction(this.cur('p'), this.cur('m')) : chooseMachineAction(this.cur('m'));
+      this.perform(lado, action);
+    })();
   }
 
   async perform(side, action) {
     const B = this.B;
+    if (this.dead || B.over || B.acting) return;
+    B.acting = true;
     const foeSide = side === 'p' ? 'm' : 'p';
-    const vivo = () => !this.dead && this.B === B;
+    const vivo = () => !this.dead && this.B === B && !B.over;
     const me = this.cur(side);
     const foe = this.cur(foeSide);
     const c = me.card;
-    const quien = side === 'p' ? this.player.nickname : 'La máquina';
+    const quien = side === 'p' ? (B.mode === 'auto' ? `${this.player.nickname} (auto)` : this.player.nickname) : 'La máquina';
     const fMe = this.querySelector(`#f-${side}`);
     const fFoe = this.querySelector(`#f-${foeSide}`);
     B.lock = true;
@@ -160,11 +169,18 @@ export class BattleArena extends HTMLElement {
       if (!vivo()) return;
 
       const r = resolveAction(me, foe, action);
-      this.log(`${esEspecial ? '⚡' : '⚔️'} ${quien}: ${c.name} usa ${r.name} → ${r.damage} de daño${r.blocked ? ' (bloqueado 50 %)' : ''}.`);
+      const aviso = r.dodged ? '💨 ¡ATAQUE ESQUIVADO! ' : r.critical ? '💥 ¡GOLPE CRÍTICO! ' : '';
+      const detalle = r.dodged ? ' y no hace daño' : ` → ${r.damage} de daño${r.blocked ? ' (bloqueado 50 %)' : ''}`;
+      this.log(`${aviso}${esEspecial ? '⚡' : '⚔️'} ${quien}: ${c.name} usa ${r.name}${detalle}.`);
       this.refresh();
-      fFoe.animar('anim-hit', 500);
-      fFoe.mostrarDanio(`-${r.damage}`, `${esEspecial ? 'sp ' : ''}${r.blocked ? 'blk' : ''}`);
-      await sleep(900);
+      fFoe.animar(r.dodged ? 'anim-dodge' : 'anim-hit', 500);
+      if (r.dodged) {
+        fFoe.mostrarEsquivo();
+      } else {
+        fFoe.mostrarDanio(`-${r.damage}`, `${esEspecial ? 'sp ' : ''}${r.blocked ? 'blk ' : ''}${r.critical ? 'crit' : ''}`);
+        if (r.critical) fFoe.mostrarCritico();
+      }
+      await sleep(r.dodged ? 1100 : r.critical ? 1200 : 900);
       if (!vivo()) return;
 
       if (r.defeated) {
@@ -176,6 +192,7 @@ export class BattleArena extends HTMLElement {
         B[foeSide].idx++;
         if (B[foeSide].idx >= 5) {
           B[foeSide].idx = 4; // se queda mostrando la última carta derrotada
+          B.acting = false;
           return this.finish(side);
         }
         const nueva = this.cur(foeSide).card;
@@ -186,6 +203,7 @@ export class BattleArena extends HTMLElement {
         if (!vivo()) return;
       }
     }
+    B.acting = false;
     B.turnCount++;
     B.turn = foeSide;
     this.beginTurn();
@@ -211,6 +229,7 @@ export class BattleArena extends HTMLElement {
         playerDeck: B.p.deck.map((d) => d.card.id),
         machineDeck: B.m.deck.map((d) => d.card.id),
         startedAt: B.startedAt,
+        mode: B.mode,
       });
       this.player = player;
       B.saveErr = false;
@@ -243,7 +262,7 @@ export class BattleArena extends HTMLElement {
     const B = this.B;
     if (!B) return;
     const round = Math.floor(B.turnCount / 2) + 1;
-    const texto = B.intro ? 'Sorteando quién inicia…' : B.over ? 'Combate terminado' : B.turn === 'p' ? '🟢 Tu turno' : '🔴 Turno de la máquina…';
+    const texto = B.intro ? 'Sorteando quién inicia…' : B.over ? 'Combate terminado' : B.turn === 'p' ? (B.mode === 'auto' ? '🤖 Tu carta decide…' : '🟢 Tu turno') : '🔴 Turno de la máquina…';
     const bar = this.querySelector('#turnbar');
     bar.className = `turnbar ${B.over || B.intro ? '' : B.turn}`;
     // Avatar de quien tiene el turno: jugador a la izquierda, máquina a la derecha
@@ -253,7 +272,7 @@ export class BattleArena extends HTMLElement {
     }
     bar.querySelector('.tb-hp.p').innerHTML = this.hpHTML('p');
     bar.querySelector('.tb-hp.m').innerHTML = this.hpHTML('m');
-    bar.querySelector('.tb-text').innerHTML = `${texto}<small>Ronda ${round} · Turno ${B.turnCount + 1}</small>`;
+    bar.querySelector('.tb-text').innerHTML = `${texto}<small>Ronda ${round} · Turno ${B.turnCount + 1} · Modo ${B.mode === 'auto' ? 'AUTOMÁTICO' : 'MANUAL'}</small>`;
     const cambio = bar.dataset.activo !== String(activo);
     if (cambio) {
       // Solo se redibuja al cambiar de turno, así la animación no se repite en cada refresh

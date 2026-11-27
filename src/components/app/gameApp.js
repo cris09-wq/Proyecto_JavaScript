@@ -99,7 +99,7 @@ export class GameApp extends HTMLElement {
       main.innerHTML = '<deck-selector></deck-selector>';
     } else if (view === 'battle') {
       main.innerHTML = '<battle-arena></battle-arena>';
-      main.firstElementChild.start({ player, deck: deck.deck, pool: deck.pool });
+      main.firstElementChild.start({ player, deck: deck.deck, pool: deck.pool, mode: deck.mode ?? 'manual' });
     } else if (view === 'ranking') {
       main.innerHTML = '<game-leaderboard></game-leaderboard>';
       main.firstElementChild.playerId = player?.id ?? null;

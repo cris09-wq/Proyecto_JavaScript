@@ -8,7 +8,7 @@ export async function getBattles() {
  * Guarda el registro de una partida terminada.
  * @param {{player:{id:string,nickname:string}, didWin:boolean, playerDeck:string[], machineDeck:string[], startedAt:string}} data
  */
-export async function postBattle({ player, didWin, playerDeck, machineDeck, startedAt }) {
+export async function postBattle({ player, didWin, playerDeck, machineDeck, startedAt, mode }) {
   return request('/battles', {
     method: 'POST',
     body: JSON.stringify({
@@ -20,6 +20,7 @@ export async function postBattle({ player, didWin, playerDeck, machineDeck, star
       playerDeck,
       machineDeck,
       startedAt,
+      mode: mode === 'auto' ? 'automatic' : 'manual',
       endedAt: new Date().toISOString(),
     }),
   });

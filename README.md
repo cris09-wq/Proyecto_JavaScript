@@ -66,12 +66,17 @@ Login académico: las credenciales están en `db.json` y no representan segurida
 2. **Mazo:** 5 cartas distintas, luego se define el orden de entrada. Se necesitan al menos 10 cartas activas.
 3. **Combate:** cada carta tiene 250 HP. Si pierde toda la vida es derrotada y entra la siguiente; la carta vencedora **no** recupera vida. Pierde quien se quede sin sus 5 cartas.
 4. **Inicio:** se sortea al azar quién empieza (`Math.random() < 0.5`).
-5. **Ataques:** 4 ataques por carta. `daño = base × factor(0.85–1.15)`, redondeado.
+5. **Ataques:** 4 ataques por carta. `daño = base × factor(0.85–1.15)`; el redondeo se hace al final, después del crítico y la defensa.
 6. **Defensa:** consume el turno; el siguiente golpe recibido se reduce 50 % y la defensa se gasta.
-7. **Especial:** se habilita desde el 2.º turno de esa carta, causa más daño y queda en cooldown de 3 turnos propios (la interfaz muestra el bloqueo y los turnos que faltan).
+7. **Especial:** se habilita desde el 2.º turno de esa carta, causa más daño y queda en cooldown de 3 turnos propios (la interfaz muestra el bloqueo y los turnos que faltan). Solo entra en la lista de acciones cuando está desbloqueado y sin cooldown; si se usa, puede ser esquivado, puede ser crítico y la defensa reduce su daño igual que a un ataque.
 8. **Máquina:** una función elige una acción válida al azar con pesos (nunca un especial bloqueado).
 9. **Puntos:** victoria +50, derrota +10. Se acumulan junto con victorias, derrotas y partidas jugadas.
-10. **Historial:** al terminar se guarda un registro en `/battles`.
+10. **Historial:** al terminar se guarda un registro en `/battles` con `result`, `pointsAwarded`, mazos, fechas y `mode` (`manual` o `automatic`).
+11. **Modos de batalla:** en el paso 2 del mazo se elige **MANUAL** (el jugador pulsa los botones, comportamiento original) o **AUTOMÁTICO** (la carta del jugador también decide sola). En automático ambas cartas actúan mediante estrategias JavaScript, con pausas visibles, animaciones e historial; los botones quedan desactivados, la barra dice `🤖 Tu carta decide… · Modo AUTOMÁTICO` y los clics se ignoran mientras `lock` o `acting` estén activos. Las reglas de turno, vida, defensa, especial y cooldown no cambian.
+12. **Golpe crítico:** todo ataque o especial que causa daño tiene 12 % de probabilidad de ser crítico y multiplica su daño ×1.5. Se anuncia como `💥 ¡GOLPE CRÍTICO!` en el historial, con aviso dorado sobre la carta rival y pausa extra; la defensa se aplica después del multiplicador.
+13. **Esquivo:** tras calcular el factor de daño y antes de aplicar crítico o defensa, la carta que recibe el ataque tiene 8 % de probabilidad de esquivarlo por completo (daño 0). Se informa como `💨 ¡ATAQUE ESQUIVADO!` en el historial y con un aviso azul sobre la carta; si esquiva, no se consume su defensa.
+14. **Orden de resolución:** seleccionar ataque → calcular factor aleatorio → esquivo (si esquiva, daño 0 y termina) → crítico → defensa → redondear → `currentHp = Math.max(0, currentHp - damage)` → actualizar interfaz → verificar derrota.
+15. **Finalización y persistencia:** el cierre es igual en ambos modos: se decide ganador, se suman +50/+10 con `PATCH /players`, se guarda la partida con `POST /battles` (incluido `mode`: `manual` o `automatic`) y `battle-finished` actualiza el jugador y el header; al abrir el ranking se vuelven a consultar los jugadores. No hay `setInterval`: las pausas son `sleep()` con `setTimeout()` y las acciones pendientes se descartan con las banderas `dead`, `this.B !== B`, `over`, `acting` y el cambio de turno.
 
 ## CRUD de cartas (Administración)
 
@@ -101,7 +106,7 @@ cardBattle/
 │   │   ├── battle/       battle.js · battleCard.js · battleControls.js
 │   │   └── leaderboard/  leaderboard.js (podio Top 3)
 │   ├── data/db.json      20 cartas + admin
-│   ├── utils/            battleEngine.js · random.js · validators.js · audio.js · …
+│   ├── utils/            battleEngine.js (reglas + IA de la máquina + estrategia automática del jugador) · random.js · validators.js · audio.js · …
 │   └── app.js            punto de entrada
 ├── .env · .env.example
 └── index.html            solo <card-game-app>
